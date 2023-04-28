@@ -40,23 +40,23 @@
         </span>
       </el-form-item>
 
-      <el-form-item prop="confirmPassword">
+      <el-form-item prop="checkPassword">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
         <el-input
-          :key="confirmPasswordType"
-          ref="confirmPassword"
-          v-model="registerForm.confirmPassword"
-          :type="confirmPasswordType"
+          :key="checkPasswordType"
+          ref="password"
+          v-model="registerForm.checkPassword"
+          :type="checkPasswordType"
           placeholder="确认密码"
-          name="confirmPassword"
+          name="checkPassword"
           tabindex="2"
           auto-complete="on"
           @keyup.enter.native="handleRegister"
         />
-        <span class="show-pwd" @click="showPwd('confirmPasswordType')">
-          <svg-icon :icon-class="confirmPasswordType === 'password' ? 'eye' : 'eye-open'" />
+        <span class="show-pwd" @click="showPwd('checkPasswordType')">
+          <svg-icon :icon-class="checkPasswordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
@@ -86,7 +86,7 @@ export default {
         callback()
       }
     }
-    const validateConfirmPassword = (rule, value, callback) => {
+    const validateCheckPassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('确认密码不能少于8位'))
       } else if (value !== this.registerForm.password) {
@@ -100,16 +100,16 @@ export default {
       registerForm: {
         username: '',
         password: '',
-        confirmPassword: ''
+        checkPassword: ''
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        confirmPassword: [{ required: true, trigger: 'blur', validator: validateConfirmPassword }]
+        checkPassword: [{ required: true, trigger: 'blur', validator: validateCheckPassword }]
       },
       loading: false,
       passwordType: 'password',
-      confirmPasswordType: 'password',
+      checkPasswordType: 'password',
       redirect: undefined
     }
   },
@@ -133,14 +133,14 @@ export default {
           this.$refs.password.focus()
         })
       }
-      if (data === 'confirmPasswordType') {
-        if (this.confirmPasswordType === 'password') {
-          this.confirmPasswordType = ''
+      if (data === 'checkPasswordType') {
+        if (this.checkPasswordType === 'password') {
+          this.checkPasswordType = ''
         } else {
-          this.confirmPasswordType = 'password'
+          this.checkPasswordType = 'password'
         }
         this.$nextTick(() => {
-          this.$refs.confirmPassword.focus()
+          this.$refs.checkPassword.focus()
         })
       }
     },
@@ -175,102 +175,117 @@ export default {
 }
 </script>
 
-  <style lang="scss">
-  /* 修复input 背景不协调 和光标变色 */
-  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+<style lang="scss">
+/* 修复input 背景不协调 和光标变色 */
+/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-  $bg:#283443;
-  $light_gray:#fff;
-  $cursor: #fff;
+$bg: #283443;
+$light_gray: #fff;
+$cursor: #fff;
 
-  @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-    .register-container .el-input input {
-      color: $cursor;
-    }
-  }
+// 当使用图片为背景时，颜色与图片不符
+// @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+//   .register-container .el-input input {
+//     color: $cursor;
+//   }
+// }
 
-  /* reset element-ui css */
-  .register-container {
-    .el-input {
-      display: inline-block;
+/* 修复input 使用图片背景时，不协调和光标变色 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition-delay: 99999s;
+  -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
+}
+
+/* reset element-ui css */
+.register-container {
+  .el-input {
+    display: inline-block;
+    height: 47px;
+    width: 85%;
+
+    input {
+      background: transparent;
+      border: 0px;
+      -webkit-appearance: none;
+      border-radius: 0px;
+      padding: 12px 5px 12px 15px;
+      color: $light_gray;
       height: 47px;
-      width: 85%;
+      caret-color: $cursor;
 
-      input {
-        background: transparent;
-        border: 0px;
-        -webkit-appearance: none;
-        border-radius: 0px;
-        padding: 12px 5px 12px 15px;
-        color: $light_gray;
-        height: 47px;
-        caret-color: $cursor;
-
-        &:-webkit-autofill {
-          box-shadow: 0 0 0px 1000px $bg inset !important;
-          -webkit-text-fill-color: $cursor !important;
-        }
-      }
-    }
-
-    .el-form-item {
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 5px;
-      color: #454545;
+      // 当使用图片为背景时，颜色与图片不符
+      // &:-webkit-autofill {
+      //   box-shadow: 0 0 0px 1000px $bg inset !important;
+      //   -webkit-text-fill-color: $cursor !important;
+      // }
     }
   }
-  </style>
 
-  <style lang="scss" scoped>
-  $bg:#2d3a4b;
-  $dark_gray:#889aa4;
-  $light_gray:#eee;
+  .el-form-item {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    color: #454545;
+  }
+}
+</style>
 
-  .register-container {
-    min-height: 100%;
-    width: 100%;
-    background-color: $bg;
+<style lang="scss" scoped>
+$bg: #2d3a4b;
+$dark_gray: #eeeeeebc;
+$light_gray: #eee;
+
+.register-container {
+  min-height: 100%;
+  width: 100%;
+  // background-color: $bg;
+  background-image: url(../../static/register.jpg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  .register-form {
+    position: relative;
+    width: 520px;
+    max-width: 100%;
+    padding: 160px 35px 0;
+    margin: 0 auto;
     overflow: hidden;
+  }
 
-    .register-form {
-      position: relative;
-      width: 520px;
-      max-width: 100%;
-      padding: 160px 35px 0;
-      margin: 0 auto;
-      overflow: hidden;
-    }
+  .svg-container {
+    padding: 6px 5px 6px 15px;
+    color: $dark_gray;
+    vertical-align: middle;
+    width: 30px;
+    display: inline-block;
+  }
 
-    .svg-container {
-      padding: 6px 5px 6px 15px;
-      color: $dark_gray;
-      vertical-align: middle;
-      width: 30px;
-      display: inline-block;
-    }
+  .title-container {
+    position: relative;
 
-    .title-container {
-      position: relative;
-
-      .title {
-        font-size: 26px;
-        color: $light_gray;
-        margin: 0px auto 40px auto;
-        text-align: center;
-        font-weight: bold;
-      }
-    }
-
-    .show-pwd {
-      position: absolute;
-      right: 10px;
-      top: 7px;
-      font-size: 16px;
-      color: $dark_gray;
-      cursor: pointer;
-      user-select: none;
+    .title {
+      font-size: 26px;
+      color: $light_gray;
+      margin: 0px auto 40px auto;
+      text-align: center;
+      font-weight: bold;
     }
   }
-  </style>
+
+  .show-pwd {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 16px;
+    color: $dark_gray;
+    cursor: pointer;
+    user-select: none;
+  }
+}
+</style>
 

@@ -16,18 +16,36 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function getInfo() {
   return request({
     url: '/api/user/info',
     method: 'get',
-    params: { token }
+    params: {}
   })
 }
 
-export function logout(token) {
+export function logout() {
   return request({
     url: '/api/user/logout',
     method: 'post',
-    params: { token }
+    params: {}
+  })
+}
+
+export function updateInfo(data) {
+  return request({
+    url: '/api/user/update',
+    method: 'post',
+    params: {},
+    data: data
+  })
+}
+
+export function updatePassword(data) {
+  return request({
+    url: '/api/user/updatePassword',
+    method: 'post',
+    params: {},
+    data: data
   })
 }

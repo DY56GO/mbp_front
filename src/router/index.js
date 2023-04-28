@@ -32,14 +32,20 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
   },
 
   {
-    path: '/register',
-    component: () => import('@/views/register/index'),
+    path: '/login',
+    component: () => import('@/views/login/index'),
     hidden: true
   },
 
@@ -57,8 +63,52 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'el-icon-s-home', affix: true }
     }]
+  },
+
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user',
+    name: 'User',
+    meta: { title: '用户中心', icon: 'el-icon-user' },
+    children: [
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@/views/user/account'),
+        meta: { title: '我的信息', icon: 'el-icon-user-solid', noCache: false }
+      },
+      {
+        path: 'password',
+        name: 'Password',
+        component: () => import('@/views/user/password'),
+        meta: { title: '修改密码', icon: 'el-icon-lock', noCache: false }
+      }
+    ]
+  },
+
+  {
+    path: '/settings',
+    component: Layout,
+    redirect: '/settings',
+    name: 'Settings',
+    meta: { title: '系统管理', icon: 'el-icon-setting' },
+    children: [
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/settings/menu'),
+        meta: { title: '菜单管理', icon: 'el-icon-menu', noCache: false }
+      },
+      {
+        path: 'role',
+        name: 'Role',
+        component: () => import('@/views/settings/role'),
+        meta: { title: '角色管理', icon: 'el-icon-key', noCache: false }
+      }
+    ]
   },
 
   {

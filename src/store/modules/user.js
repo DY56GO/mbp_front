@@ -30,9 +30,9 @@ const mutations = {
 const actions = {
   // user register
   register({ commit }, userInfo) {
-    const { username, password, confirmPassword } = userInfo
+    const { username, password, checkPassword } = userInfo
     return new Promise((resolve, reject) => {
-      register({ userAccount: username.trim(), userPassword: password, checkPassword: confirmPassword }).then(() => {
+      register({ userAccount: username.trim(), userPassword: password, checkPassword: checkPassword }).then(() => {
         resolve()
       }).catch(error => {
         reject(error)
@@ -41,13 +41,14 @@ const actions = {
   },
 
   // user login
-  login({ commit }, userInfo) {
+  login({ commit, dispatch }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ userAccount: username.trim(), userPassword: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data)
         setToken(data)
+        dispatch('tagsView/delAllViews', null, { root: true })
         resolve()
       }).catch(error => {
         reject(error)
@@ -77,12 +78,13 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
+        dispatch('tagsView/delAllViews', null, { root: true })
         resolve()
       }).catch(error => {
         reject(error)

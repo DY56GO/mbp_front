@@ -134,14 +134,24 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
+// 当使用图片为背景时，颜色与图片不符
+// @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+//   .login-container .el-input input {
+//     color: $cursor;
+//   }
+// }
+
+/* 修复input 使用图片背景时，不协调和光标变色 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition-delay: 99999s;
+  -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
 }
 
 /* reset element-ui css */
@@ -161,16 +171,18 @@ $cursor: #fff;
       height: 47px;
       caret-color: $cursor;
 
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
+      // 当使用图片为背景时，颜色与图片不符
+      // &:-webkit-autofill {
+      //   box-shadow: 0 0 0px 1000px $bg inset !important;
+      //   -webkit-text-fill-color: $cursor !important;
+      // }
     }
   }
 
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    // background: rgba(0, 0, 0, 0.1);
+    background: transparent;
     border-radius: 5px;
     color: #454545;
   }
@@ -178,15 +190,19 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
-$customColor_a: #409EFF;
+$bg: #2d3a4b;
+$dark_gray: #eeeeeebc;
+$light_gray: #eee;
+$customColor_a: #409eff;
 
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  // background-color: $bg;
+  background-image: url(../../static/login.jpg);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
   overflow: hidden;
 
   .login-form {

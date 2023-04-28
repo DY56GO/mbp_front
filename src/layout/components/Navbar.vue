@@ -16,9 +16,9 @@
               首页
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
+          <router-link to="/settings/account">
             <el-dropdown-item>
-              账号密码设置
+              我的信息
             </el-dropdown-item>
           </router-link>
           <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
@@ -58,7 +58,8 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push('/login')
     }
   }
 }
@@ -70,18 +71,18 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -108,10 +109,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }
