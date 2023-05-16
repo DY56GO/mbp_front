@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="padding-left: 8%;">
+  <div class="app-container">
     <el-form ref="form" :model="form" label-width="100px" style="width: 460px;">
       <el-form-item label="用户账号">
         <el-input

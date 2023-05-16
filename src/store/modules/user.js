@@ -93,10 +93,11 @@ const actions = {
   },
 
   // remove token
-  resetToken({ commit }) {
+  resetToken({ commit, dispatch }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
+      dispatch('tagsView/delAllViews', null, { root: true })
       resolve()
     })
   }

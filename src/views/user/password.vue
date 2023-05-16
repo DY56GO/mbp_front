@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container" style="padding-left: 8%;">
+  <div class="app-container">
     <el-form ref="form" :model="form" :rules="updateRules" label-width="100px" style="width: 460px;">
       <el-form-item label="旧密码">
         <el-input

@@ -106,7 +106,7 @@ export const constantRoutes = [
         path: 'role',
         name: 'Role',
         component: () => import('@/views/settings/role'),
-        meta: { title: '角色管理', icon: 'el-icon-key', noCache: false }
+        meta: { title: '角色管理', icon: 'el-icon-s-custom', noCache: false }
       }
     ]
   },
