@@ -16,9 +16,14 @@
               首页
             </el-dropdown-item>
           </router-link>
-          <router-link to="/settings/account">
+          <router-link to="/user/account">
             <el-dropdown-item>
               我的信息
+            </el-dropdown-item>
+          </router-link>
+          <router-link to="/user/password">
+            <el-dropdown-item>
+              修改密码
             </el-dropdown-item>
           </router-link>
           <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
