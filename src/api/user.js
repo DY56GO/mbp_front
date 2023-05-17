@@ -32,7 +32,32 @@ export function logout() {
   })
 }
 
-export function updateInfo(data) {
+export function getList() {
+  return request({
+    url: '/api/user/list',
+    method: 'get',
+    params: {}
+  })
+}
+
+export function getListPage(data) {
+  return request({
+    url: '/api/user/list/page',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addUser(data) {
+  return request({
+    url: '/api/user/add',
+    method: 'post',
+    params: {},
+    data: data
+  })
+}
+
+export function updateUser(data) {
   return request({
     url: '/api/user/update',
     method: 'post',
@@ -44,6 +69,15 @@ export function updateInfo(data) {
 export function updatePassword(data) {
   return request({
     url: '/api/user/updatePassword',
+    method: 'post',
+    params: {},
+    data: data
+  })
+}
+
+export function deleteUser(data) {
+  return request({
+    url: '/api/user/delete',
     method: 'post',
     params: {},
     data: data

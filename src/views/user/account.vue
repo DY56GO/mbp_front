@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="100px" style="width: 460px;">
-      <el-form-item label="用户账号">
+    <el-form ref="form" :model="form" :rules="rules" label-width="100px" style="width: 460px;">
+      <el-form-item label="用户账号" prop="userAccount">
         <el-input
           v-model="form.userAccount"
           placeholder="用户账号"
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { getInfo, updateInfo } from '@/api/user'
+import { getInfo, updateUser } from '@/api/user'
 
 export default {
   name: 'Account',
@@ -30,6 +30,9 @@ export default {
       form: {
         userAccount: '',
         userName: ''
+      },
+      rules: {
+        userAccount: [{ required: true, message: '请输入用户账号', trigger: 'blur' }]
       }
     }
   },
@@ -45,20 +48,25 @@ export default {
       })
     },
     onSubmit() {
-      console.log('submit!')
-      return new Promise((resolve, reject) => {
-        updateInfo(this.form).then(() => {
-          this.fetchData()
-          this.$message({
-            showClose: true,
-            message: '修改成功！',
-            type: 'success',
-            duration: 1500
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          return new Promise((resolve, reject) => {
+            updateUser(this.form).then(() => {
+              this.fetchData()
+              this.$message({
+                showClose: true,
+                message: '修改成功！',
+                type: 'success',
+                duration: 1500
+              })
+              resolve()
+            }).catch(error => {
+              reject(error)
+            })
           })
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        } else {
+          return false
+        }
       })
     }
   }

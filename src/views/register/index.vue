@@ -67,18 +67,10 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 
 export default {
   name: 'Register',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
-      } else {
-        callback()
-      }
-    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能少于8位'))
@@ -103,7 +95,7 @@ export default {
         checkPassword: ''
       },
       registerRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
         checkPassword: [{ required: true, trigger: 'blur', validator: validateCheckPassword }]
       },
@@ -158,15 +150,15 @@ export default {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
+            this.$message({
+              showClose: true,
+              message: '注册失败！',
+              type: 'error',
+              duration: 1500
+            })
             this.loading = false
           })
         } else {
-          this.$message({
-            showClose: true,
-            message: '注册失败！',
-            type: 'error',
-            duration: 1500
-          })
           return false
         }
       })

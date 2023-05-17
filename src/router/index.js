@@ -50,6 +50,12 @@ export const constantRoutes = [
   },
 
   {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    hidden: true
+  },
+
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
@@ -96,6 +102,12 @@ export const constantRoutes = [
     name: 'Settings',
     meta: { title: '系统管理', icon: 'el-icon-setting' },
     children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/settings/user'),
+        meta: { title: '用户管理', icon: 'el-icon-menu', noCache: false }
+      },
       {
         path: 'menu',
         name: 'Menu',

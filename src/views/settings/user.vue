@@ -3,8 +3,8 @@
     <el-container>
       <el-header height="30px">
         <el-input
-          v-model="list.menuName"
-          placeholder="请输入菜单名称"
+          v-model="list.userName"
+          placeholder="请输入用户名称"
           clearable
           style="width: 460px;"
           @clear="fetchData"
@@ -30,54 +30,62 @@
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
           <el-table-column
-            prop="menuName"
-            label="菜单名称"
-            width="160"
+            prop="userName"
+            label="用户名称"
+            width="100"
           />
           <el-table-column
-            prop="menuIcon"
-            label="菜单图标"
-            width="130"
+            prop="userAccount"
+            label="用户账号"
+            width="100"
           />
           <el-table-column
-            prop="routeUrl"
-            label="路由Url"
+            prop="userAvatar"
+            label="用户头像"
+          />
+          <el-table-column
+            prop="gender"
+            label="性别"
+            width="50"
+            show-overflow-tooltip
+            align="center"
+          >
+            <template slot-scope="scope">
+              <span v-if="scope.row.gender === 1">男</span>
+              <span v-else-if="scope.row.gender === 0">女</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="userPassword"
+            label="密码"
             width="180"
           />
           <el-table-column
-            prop="componentName"
-            label="组件名称"
-            width="110"
-          />
-          <el-table-column
-            prop="componentPath"
-            label="组件路径"
-            width="180"
-          />
-          <el-table-column
-            prop="description"
-            label="描述"
-          />
-          <el-table-column
-            prop="isHidden"
+            prop="isUsing"
             label="状态"
             width="100"
             align="center"
           >
             <template slot-scope="scope">
               <el-switch
-                v-model="scope.row.isHidden"
+                v-model="scope.row.isUsing"
                 :active-value="1"
                 :inactive-value="0"
-                active-text="隐藏"
-                @change="handleHiddenChange(scope.row)"
+                active-text="启用"
+                @change="handleUsingChange(scope.row)"
               />
             </template>
           </el-table-column>
           <el-table-column
-            prop="menuSort"
-            label="排序"
-            width="60"
+            prop="createTime"
+            label="创建时间"
+            width="180"
+            align="center"
+          />
+          <el-table-column
+            prop="updateTime"
+            label="更新时间"
+            width="180"
             align="center"
           />
           <el-table-column
@@ -89,24 +97,16 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                type="primary"
-                icon="el-icon-plus"
-                @click="handleAddFromShow(scope.row)"
-              >新增</el-button>
-              <el-button
-                size="mini"
                 type="warning"
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
-
               <el-button
                 size="mini"
                 type="danger"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
               >删除</el-button>
-
             </template>
           </el-table-column>
         </el-table>
@@ -125,28 +125,25 @@
       </el-main>
     </el-container>
 
-    <el-dialog title="新增菜单" :visible.sync="dialogAddFormVisible" width="30%">
-      <el-form ref="menuAddForm" :rules="menuRules" :model="addForm" :label-width="formLabelWidth">
-        <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="addForm.menuName" autocomplete="off" style="width: 260px;" />
+    <el-dialog title="新增用户" :visible.sync="dialogAddFormVisible" width="30%">
+      <el-form ref="userAddForm" :rules="userRules" :model="userAddForm" :label-width="formLabelWidth">
+        <el-form-item label="用户名称">
+          <el-input v-model="userAddForm.userName" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="菜单图标" prop="menuIcon">
-          <el-input v-model="addForm.menuIcon" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="用户账号" prop="userAccount">
+          <el-input v-model="userAddForm.userAccount" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="路由Url" prop="routeUrl">
-          <el-input v-model="addForm.routeUrl" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="用户头像">
+          <el-input v-model="userAddForm.userAvatar" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="组件名称" prop="componentName">
-          <el-input v-model="addForm.componentName" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="性别">
+          <el-select v-model="userAddForm.gender" placeholder="请选择性别">
+            <el-option label="女" value="0" />
+            <el-option label="男" value="1" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="组件路径" prop="componentPath">
-          <el-input v-model="addForm.componentPath" autocomplete="off" style="width: 260px;" />
-        </el-form-item>
-        <el-form-item label="菜单排序" prop="menuSort">
-          <el-input v-model="addForm.menuSort" autocomplete="off" style="width: 260px;" />
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="addForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="密码" prop="userPassword">
+          <el-input v-model="userAddForm.userPassword" autocomplete="off" style="width: 260px;" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -155,28 +152,25 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="修改菜单" :visible.sync="dialogEditFormVisible" width="30%">
-      <el-form ref="menuEditForm" :rules="menuRules" :model="editForm" :label-width="formLabelWidth">
-        <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="editForm.menuName" autocomplete="off" style="width: 260px;" />
+    <el-dialog title="修改用户" :visible.sync="dialogEditFormVisible" width="30%">
+      <el-form ref="userEditForm" :rules="userRules" :model="userEditForm" :label-width="formLabelWidth">
+        <el-form-item label="用户名称" prop="userName">
+          <el-input v-model="userEditForm.userName" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="菜单图标" prop="menuIcon">
-          <el-input v-model="editForm.menuIcon" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="用户账号" prop="userAccount">
+          <el-input v-model="userEditForm.userAccount" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="路由Url" prop="routeUrl">
-          <el-input v-model="editForm.routeUrl" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="用户头像">
+          <el-input v-model="userEditForm.userAvatar" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="组件名称" prop="componentName">
-          <el-input v-model="editForm.componentName" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="性别">
+          <el-select v-model="userEditForm.gender" placeholder="请选择性别">
+            <el-option label="女" value="0" />
+            <el-option label="男" value="1" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="组件路径" prop="componentPath">
-          <el-input v-model="editForm.componentPath" autocomplete="off" style="width: 260px;" />
-        </el-form-item>
-        <el-form-item label="菜单排序" prop="menuSort">
-          <el-input v-model="editForm.menuSort" autocomplete="off" style="width: 260px;" />
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="editForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="密码" prop="userPassword">
+          <el-input v-model="userEditForm.userPassword" autocomplete="off" style="width: 260px;" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -189,39 +183,38 @@
 </template>
 
 <script>
-import { getListPage, addMenu, updateMenu, deleteMenu } from '@/api/menu'
+import { getListPage, addUser, updateUser, deleteUser } from '@/api/user'
 
 export default {
-  name: 'Menu',
+  name: 'User',
   data() {
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('密码不能少于8位'))
+      } else {
+        callback()
+      }
+    }
     return {
       list: {
-        menuName: '',
+        userName: '',
         current: 1,
         pageSize: 100,
         total: 0
       },
-      addForm: {
-        parentId: 0,
-        menuName: '',
-        menuIcon: '',
-        routeUrl: '',
-        componentName: '',
-        componentPath: '',
-        description: '',
-        isHidden: 0,
-        menuSort: 1
+      userAddForm: {
+        userName: '',
+        userAccount: '',
+        userAvatar: '',
+        gender: '',
+        userPassword: ''
       },
-      editForm: {
-        parentId: 0,
-        menuName: '',
-        menuIcon: '',
-        routeUrl: '',
-        componentName: '',
-        componentPath: '',
-        description: '',
-        isHidden: 0,
-        menuSort: 1
+      userEditForm: {
+        userName: '',
+        userAccount: '',
+        userAvatar: '',
+        gender: '',
+        userPassword: ''
       },
       tableData: [],
       dialogAddFormVisible: false,
@@ -229,9 +222,9 @@ export default {
       visible: false,
       // deleteVisible: false,
       formLabelWidth: '120px',
-      menuRules: {
-        menuName: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
-        routeUrl: [{ required: true, message: '请输入路由Url', trigger: 'blur' }]
+      userRules: {
+        userAccount: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
+        userPassword: [{ required: true, trigger: 'blur', validator: validatePassword }]
       }
     }
   },
@@ -254,27 +247,23 @@ export default {
       this.pageSize = val
       this.fetchData()
     },
-    handleHiddenChange(row) {
-      row.isHidden === 0 ? 1 : 0
-      updateMenu(row).then(response => {
+    handleUsingChange(row) {
+      row.isUsing === 0 ? 1 : 0
+      updateUser(row).then(response => {
         // this.fetchData
       })
     },
-    handleAddFromShow(row) {
-      // 存在父节点，有则设置
-      if (row && row.id) {
-        this.addForm.parentId = row.id
-      }
+    handleAddFromShow() {
       this.dialogAddFormVisible = !this.dialogAddFormVisible
       // form开始为隐藏状态，没有DOM对象，判单form关闭且DOM对象不为为undefined，重置表单
-      if (!this.dialogEditFormVisible && this.$refs['menuAddForm']) {
-        this.$refs['menuAddForm'].resetFields()
+      if (!this.dialogEditFormVisible && this.$refs['userAddForm']) {
+        this.$refs['userAddForm'].resetFields()
       }
     },
     handleAdd() {
-      this.$refs['menuAddForm'].validate(valid => {
+      this.$refs['userAddForm'].validate(valid => {
         if (valid) {
-          addMenu(this.addForm).then(() => {
+          addUser(this.userAddForm).then(() => {
             this.handleAddFromShow()
             this.fetchData()
             this.$message({
@@ -291,18 +280,18 @@ export default {
     },
     handleEditFromShow(row) {
       if (row) {
-        this.editForm = row
+        this.userEditForm = row
       }
       this.dialogEditFormVisible = !this.dialogEditFormVisible
       // form开始为隐藏状态，没有DOM对象，判单form关闭且DOM对象不为为undefined，重置表单
-      if (!this.dialogEditFormVisible && this.$refs['menuEditForm']) {
-        this.$refs['menuEditForm'].resetFields()
+      if (!this.dialogEditFormVisible && this.$refs['userEditForm']) {
+        this.$refs['userEditForm'].resetFields()
       }
     },
     handleEdit() {
-      this.$refs['menuEditForm'].validate(valid => {
+      this.$refs['userEditForm'].validate(valid => {
         if (valid) {
-          updateMenu(this.editForm).then(() => {
+          updateUser(this.userEditForm).then(() => {
             this.handleEditFromShow()
             this.fetchData()
             this.$message({
@@ -323,7 +312,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteMenu({ id: row.id }).then(() => {
+        deleteUser({ id: row.id }).then(() => {
           this.fetchData()
           this.$message({
             showClose: true,
@@ -340,3 +329,4 @@ export default {
 }
 
 </script>
+

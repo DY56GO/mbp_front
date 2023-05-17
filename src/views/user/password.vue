@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" :rules="updateRules" label-width="100px" style="width: 460px;">
-      <el-form-item label="旧密码">
+      <el-form-item prop="userOldPassword" label="旧密码">
         <el-input
           v-model="form.userOldPassword"
           placeholder="旧密码"
@@ -69,6 +69,7 @@ export default {
         newCheckPassword: ''
       },
       updateRules: {
+        userOldPassword: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
         userNewPassword: [{ required: true, trigger: 'blur', validator: validateNewPassword }],
         newCheckPassword: [{ required: true, trigger: 'blur', validator: validateNewCheckPassword }]
       },
@@ -80,19 +81,24 @@ export default {
   },
   methods: {
     onSubmit() {
-      console.log('submit!')
-      return new Promise((resolve, reject) => {
-        updatePassword(this.form).then(() => {
-          this.$message({
-            showClose: true,
-            message: '修改成功！',
-            type: 'success',
-            duration: 1500
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          return new Promise((resolve, reject) => {
+            updatePassword(this.form).then(() => {
+              this.$message({
+                showClose: true,
+                message: '修改成功！',
+                type: 'success',
+                duration: 1500
+              })
+              resolve()
+            }).catch(error => {
+              reject(error)
+            })
           })
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        } else {
+          return false
+        }
       })
     }
   }
