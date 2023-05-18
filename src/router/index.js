@@ -106,7 +106,7 @@ export const constantRoutes = [
         path: 'user',
         name: 'User',
         component: () => import('@/views/settings/user'),
-        meta: { title: '用户管理', icon: 'el-icon-menu', noCache: false }
+        meta: { title: '用户管理', icon: 'el-icon-notebook-1', noCache: false }
       },
       {
         path: 'menu',

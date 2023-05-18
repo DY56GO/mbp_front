@@ -66,6 +66,15 @@ export function updateUser(data) {
   })
 }
 
+export function updateUserOneself(data) {
+  return request({
+    url: '/api/user/updateOneself',
+    method: 'post',
+    params: {},
+    data: data
+  })
+}
+
 export function updatePassword(data) {
   return request({
     url: '/api/user/updatePassword',

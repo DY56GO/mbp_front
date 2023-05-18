@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { getInfo, updateUser } from '@/api/user'
+import { getInfo, updateUserOneself } from '@/api/user'
 
 export default {
   name: 'Account',
@@ -51,7 +51,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           return new Promise((resolve, reject) => {
-            updateUser(this.form).then(() => {
+            updateUserOneself(this.form).then(() => {
               this.fetchData()
               this.$message({
                 showClose: true,
