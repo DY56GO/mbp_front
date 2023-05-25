@@ -13,6 +13,16 @@
           placeholder="用户名称"
         />
       </el-form-item>
+      <el-form-item label="性别">
+        <el-select v-model="form.gender" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">修改</el-button>
       </el-form-item>
@@ -21,18 +31,33 @@
 </template>
 
 <script>
-import { getInfo, updateUserOneself } from '@/api/user'
+import { getInfo, updateUserSelf } from '@/api/user'
 
 export default {
   name: 'Account',
   data() {
+    const validateAccount = (rule, value, callback) => {
+      if (value.length < 4) {
+        callback(new Error('账号不能少于4个字'))
+      } else {
+        callback()
+      }
+    }
     return {
+      options: [{
+        value: 1,
+        label: '男'
+      }, {
+        value: 0,
+        label: '女'
+      }],
       form: {
         userAccount: '',
-        userName: ''
+        userName: '',
+        gender: ''
       },
       rules: {
-        userAccount: [{ required: true, message: '请输入用户账号', trigger: 'blur' }]
+        userAccount: [{ required: true, trigger: 'blur', validator: validateAccount }]
       }
     }
   },
@@ -45,23 +70,19 @@ export default {
         const { data } = response
         this.form.userAccount = data.userAccount
         this.form.userName = data.userName
+        this.form.gender = data.gender
       })
     },
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          return new Promise((resolve, reject) => {
-            updateUserOneself(this.form).then(() => {
-              this.fetchData()
-              this.$message({
-                showClose: true,
-                message: '修改成功！',
-                type: 'success',
-                duration: 1500
-              })
-              resolve()
-            }).catch(error => {
-              reject(error)
+          updateUserSelf(this.form).then(() => {
+            this.fetchData()
+            this.$message({
+              showClose: true,
+              message: '修改成功！',
+              type: 'success',
+              duration: 1500
             })
           })
         } else {

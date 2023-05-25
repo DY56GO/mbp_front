@@ -83,18 +83,14 @@ export default {
     onSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          return new Promise((resolve, reject) => {
-            updatePassword(this.form).then(() => {
-              this.$message({
-                showClose: true,
-                message: '修改成功！',
-                type: 'success',
-                duration: 1500
-              })
-              resolve()
-            }).catch(error => {
-              reject(error)
+          updatePassword(this.form).then(() => {
+            this.$message({
+              showClose: true,
+              message: '修改成功！',
+              type: 'success',
+              duration: 1500
             })
+            this.$refs['form'].resetFields()
           })
         } else {
           return false

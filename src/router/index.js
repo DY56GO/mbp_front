@@ -109,16 +109,16 @@ export const constantRoutes = [
         meta: { title: '用户管理', icon: 'el-icon-notebook-1', noCache: false }
       },
       {
-        path: 'menu',
-        name: 'Menu',
-        component: () => import('@/views/settings/menu'),
-        meta: { title: '菜单管理', icon: 'el-icon-menu', noCache: false }
-      },
-      {
         path: 'role',
         name: 'Role',
         component: () => import('@/views/settings/role'),
         meta: { title: '角色管理', icon: 'el-icon-s-custom', noCache: false }
+      },
+      {
+        path: 'menu',
+        name: 'Menu',
+        component: () => import('@/views/settings/menu'),
+        meta: { title: '菜单管理', icon: 'el-icon-menu', noCache: false }
       }
     ]
   },

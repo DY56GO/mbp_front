@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 
-export function getList() {
+export function getMenuList(data) {
   return request({
     url: '/api/menu/list',
     method: 'get',
-    params: {}
+    params: data
   })
 }
 
-export function getListPage(data) {
+export function getMenuListPage(data) {
   return request({
     url: '/api/menu/list/page',
     method: 'get',

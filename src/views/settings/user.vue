@@ -56,19 +56,14 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="userPassword"
-            label="密码"
-            width="180"
-          />
-          <el-table-column
-            prop="isUsing"
+            prop="usingStart"
             label="状态"
             width="100"
             align="center"
           >
             <template slot-scope="scope">
               <el-switch
-                v-model="scope.row.isUsing"
+                v-model="scope.row.usingStart"
                 :active-value="1"
                 :inactive-value="0"
                 active-text="启用"
@@ -77,27 +72,27 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="createTime"
+            prop="gmtCreate"
             label="创建时间"
-            width="180"
-            align="center"
-          />
-          <el-table-column
-            prop="updateTime"
-            label="更新时间"
             width="180"
             align="center"
           />
           <el-table-column
             prop="op"
             label="操作"
-            width="260"
+            width="300"
             align="center"
           >
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="warning"
+                icon="el-icon-s-check"
+                @click="handleRoleFromShow(scope.row)"
+              >权限</el-button>
+              <el-button
+                size="mini"
+                type="primary"
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
@@ -124,6 +119,20 @@
         />
       </el-main>
     </el-container>
+
+    <el-dialog title="角色分配" :visible.sync="dialogRoleFormVisible" width="30%">
+      <el-form ref="userRoleForm" :label-width="formLabelWidth">
+        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
+        <div style="margin: 15px 0;" />
+        <el-checkbox-group v-model="checkedRoles" @change="handleCheckedRolesChange">
+          <el-checkbox v-for="role in roles" :key="role.id" :label="role.id">{{ role.roleIdentity }}</el-checkbox>
+        </el-checkbox-group>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleRoleFromShow">取 消</el-button>
+        <el-button type="primary" @click="handleUpdateRole">确 定</el-button>
+      </div>
+    </el-dialog>
 
     <el-dialog title="新增用户" :visible.sync="dialogAddFormVisible" width="30%">
       <el-form ref="userAddForm" :rules="userRules" :model="userAddForm" :label-width="formLabelWidth">
@@ -164,9 +173,13 @@
           <el-input v-model="userEditForm.userAvatar" autocomplete="off" style="width: 260px;" />
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="userEditForm.gender" placeholder="请选择性别">
-            <el-option label="女" value="0" />
-            <el-option label="男" value="1" />
+          <el-select v-model="userEditForm.gender" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="密码" prop="userPassword">
@@ -183,11 +196,20 @@
 </template>
 
 <script>
-import { getListPage, addUser, updateUser, deleteUser } from '@/api/user'
+import { getUserListPage, addUser, updateUser, deleteUser, getUserRole, updateUserRole } from '@/api/user'
+import { getRoleList } from '@/api/role'
 
 export default {
   name: 'User',
   data() {
+    const validateAccount = (rule, value, callback) => {
+      if (value.length < 4) {
+        callback(new Error('账号不能少于4个字'))
+      } else {
+        callback()
+      }
+    }
+
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能少于8位'))
@@ -196,11 +218,29 @@ export default {
       }
     }
     return {
+      checkAll: false,
+      checkedRoles: [],
+      checkedRolesOld: [],
+      roles: [],
+      rolesId: [],
+      isIndeterminate: true,
       list: {
         userName: '',
         current: 1,
         pageSize: 100,
         total: 0
+      },
+      options: [{
+        value: 1,
+        label: '男'
+      }, {
+        value: 0,
+        label: '女'
+      }],
+      updateUserRole: {
+        id: '',
+        addRoleList: [],
+        deleteRoleList: []
       },
       userAddForm: {
         userName: '',
@@ -219,12 +259,12 @@ export default {
       tableData: [],
       dialogAddFormVisible: false,
       dialogEditFormVisible: false,
-      visible: false,
+      dialogRoleFormVisible: false,
       // deleteVisible: false,
       formLabelWidth: '120px',
       userRules: {
-        userAccount: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
-        userPassword: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        userAccount: [{ required: true, trigger: 'blur', validator: validateAccount }],
+        userPassword: [{ required: false, trigger: 'blur', validator: validatePassword }]
       }
     }
   },
@@ -233,7 +273,7 @@ export default {
   },
   methods: {
     fetchData() {
-      getListPage(this.list).then(response => {
+      getUserListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.total = data.total
@@ -248,9 +288,76 @@ export default {
       this.fetchData()
     },
     handleUsingChange(row) {
-      row.isUsing === 0 ? 1 : 0
+      row.usingStart === 0 ? 1 : 0
       updateUser(row).then(response => {
         // this.fetchData
+      })
+    },
+    handleCheckAllChange(val) {
+      this.checkedRoles = val ? this.rolesId : []
+      this.isIndeterminate = false
+    },
+    handleCheckedRolesChange(value) {
+      const checkedCount = value.length
+      this.checkAll = checkedCount === this.roles.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.roles.length
+    },
+    handleRoleFromShow(row) {
+      this.updateUserRole.id = ''
+      this.roles = []
+      this.rolesId = []
+      this.checkedRoles = []
+      this.checkedRolesOld = []
+
+      if (!this.dialogRoleFormVisible) {
+        this.updateUserRole.id = row.id
+        // 获取角色列表
+        getRoleList({ usingStart: 1 }).then(response => {
+          const { data } = response
+          for (const role of data) {
+            this.roles.push({ id: role.id, roleIdentity: role.roleIdentity })
+            this.rolesId.push(role.id)
+          }
+
+          // 获取用户角色
+          getUserRole({ id: row.id }).then(response => {
+            row = null
+            const { data } = response
+            for (const role of data) {
+              this.checkedRoles.push(role)
+              this.checkedRolesOld.push(role)
+            }
+            this.handleCheckedRolesChange(this.checkedRoles)
+          })
+        })
+      }
+
+      this.dialogRoleFormVisible = !this.dialogRoleFormVisible
+    },
+    handleUpdateRole() {
+      this.updateUserRole.addRoleList = []
+      this.updateUserRole.deleteRoleList = []
+
+      // 通过与旧选中比较，生成要新增和删除的角色列表
+      for (const role of this.checkedRoles) {
+        if (this.checkedRolesOld.indexOf(role) === -1) {
+          this.updateUserRole.addRoleList.push(role)
+        }
+      }
+      for (const role of this.checkedRolesOld) {
+        if (this.checkedRoles.indexOf(role) === -1) {
+          this.updateUserRole.deleteRoleList.push(role)
+        }
+      }
+
+      updateUserRole(this.updateUserRole).then(() => {
+        this.handleRoleFromShow()
+        this.$message({
+          showClose: true,
+          message: '修改成功！',
+          type: 'success',
+          duration: 1500
+        })
       })
     },
     handleAddFromShow() {

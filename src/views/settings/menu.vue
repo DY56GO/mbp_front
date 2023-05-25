@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import { getListPage, addMenu, updateMenu, deleteMenu } from '@/api/menu'
+import { getMenuListPage, addMenu, updateMenu, deleteMenu } from '@/api/menu'
 
 export default {
   name: 'Menu',
@@ -240,7 +240,7 @@ export default {
   },
   methods: {
     fetchData() {
-      getListPage(this.list).then(response => {
+      getMenuListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.total = data.total

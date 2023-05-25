@@ -44,14 +44,14 @@
             label="描述"
           />
           <el-table-column
-            prop="isUsing"
+            prop="usingStart"
             label="状态"
             width="100"
             align="center"
           >
             <template slot-scope="scope">
               <el-switch
-                v-model="scope.row.isUsing"
+                v-model="scope.row.usingStart"
                 :active-value="1"
                 :inactive-value="0"
                 active-text="启用"
@@ -61,7 +61,7 @@
           </el-table-column>
 
           <el-table-column
-            prop="createTime"
+            prop="gmtCreate"
             label="创建时间"
             width="180"
             align="center"
@@ -70,24 +70,28 @@
           <el-table-column
             prop="op"
             label="操作"
-            width="260"
+            width="300"
             align="center"
           >
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="warning"
+                icon="el-icon-s-check"
+                @click="handleMenuFromShow(scope.row)"
+              >权限</el-button>
+              <el-button
+                size="mini"
+                type="primary"
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
-
               <el-button
                 size="mini"
                 type="danger"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
               >删除</el-button>
-
             </template>
           </el-table-column>
         </el-table>
@@ -105,6 +109,28 @@
         />
       </el-main>
     </el-container>
+
+    <el-dialog title="菜单分配" :visible.sync="dialogMenuFormVisible" width="30%">
+      <el-form ref="roleMenuForm" :label-width="formLabelWidth">
+        <el-tree
+          ref="tree"
+          :data="menuData"
+          show-checkbox
+          node-key="id"
+          :default-expanded-keys="defaultExpandedMenu"
+          :default-checked-keys="defaultCheckedMenu"
+          :props="{
+            children: 'children',
+            label: 'menuName',
+          }"
+          @check-change="handleCheckChange"
+        />
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleMenuFromShow">取 消</el-button>
+        <el-button type="primary" @click="handleUpdateMenu">确 定</el-button>
+      </div>
+    </el-dialog>
 
     <el-dialog title="新增角色" :visible.sync="dialogAddFormVisible" width="30%">
       <el-form ref="roleAddForm" :rules="roleRules" :model="addForm" :label-width="formLabelWidth">
@@ -146,7 +172,8 @@
 </template>
 
 <script>
-import { getListPage, addRole, updateRole, deleteRole } from '@/api/role'
+import { getRoleListPage, addRole, updateRole, deleteRole, getRoleMenu, updateRoleMenu } from '@/api/role'
+import { getMenuList } from '@/api/menu'
 
 export default {
   name: 'Role',
@@ -158,21 +185,30 @@ export default {
         pageSize: 100,
         total: 0
       },
+      menuData: [],
+      defaultCheckedMenu: [],
+      defaultExpandedMenu: [],
+      updateRoleMenu: {
+        id: '',
+        addMenuList: [],
+        deleteMenuList: []
+      },
       addForm: {
         roleName: '',
         roleIdentity: '',
         description: '',
-        isUsing: 1
+        usingStart: 1
       },
       editForm: {
         roleName: '',
         roleIdentity: '',
         description: '',
-        isUsing: 1
+        usingStart: 1
       },
       tableData: [],
       dialogAddFormVisible: false,
       dialogEditFormVisible: false,
+      dialogMenuFormVisible: false,
       visible: false,
       // deleteVisible: false,
       formLabelWidth: '120px',
@@ -187,7 +223,7 @@ export default {
   },
   methods: {
     fetchData() {
-      getListPage(this.list).then(response => {
+      getRoleListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.total = data.total
@@ -202,9 +238,71 @@ export default {
       this.fetchData()
     },
     handleUsingChange(row) {
-      row.isUsing === 0 ? 1 : 0
+      row.usingStart === 0 ? 1 : 0
       updateRole(row).then(response => {
         // this.fetchData
+      })
+    },
+    handleMenuFromShow(row) {
+      this.updateRoleMenu.id = ''
+      this.menuData = []
+      this.defaultCheckedMenu = []
+      this.defaultExpandedMenu = []
+
+      if (!this.dialogMenuFormVisible) {
+        this.updateRoleMenu.id = row.id
+        // 获取菜单列表
+        getMenuList({ usingStart: 1 }).then(response => {
+          const { data } = response
+          this.menuData = data
+
+          // 获取角色菜单
+          getRoleMenu({ id: row.id }).then(response => {
+            row = null
+            const { data } = response
+            for (const menu of data) {
+              this.defaultCheckedMenu.push(menu.id.toString())
+              this.defaultExpandedMenu.push(menu.id.toString())
+            }
+            // 手动设置选中
+            this.$refs.tree.setCheckedKeys(this.defaultCheckedMenu, true)
+          })
+        })
+      }
+      this.dialogMenuFormVisible = !this.dialogMenuFormVisible
+    },
+    handleCheckChange(data, checked, indeterminate) {
+      const node = this.$refs.tree.getNode(data)
+      if (!indeterminate) {
+        node.expanded = checked
+      }
+    },
+    handleUpdateMenu() {
+      this.updateRoleMenu.addMenuList = []
+      this.updateRoleMenu.deleteMenuList = []
+
+      // 通过与旧选中比较，生成要新增和删除的菜单列表
+      const checkedMenu = this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
+      for (const menu of checkedMenu) {
+        if (this.defaultCheckedMenu.indexOf(menu) === -1) {
+          this.updateRoleMenu.addMenuList.push(menu)
+        }
+      }
+
+      for (const menu of this.defaultCheckedMenu) {
+        if (checkedMenu.indexOf(menu) === -1) {
+          this.updateRoleMenu.deleteMenuList.push(menu)
+        }
+      }
+
+      updateRoleMenu(this.updateRoleMenu).then(() => {
+        this.handleMenuFromShow()
+        this.$message({
+          showClose: true,
+          message: '修改成功！',
+          type: 'success',
+          duration: 1500
+        })
       })
     },
     handleAddFromShow() {
