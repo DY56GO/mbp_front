@@ -31,7 +31,8 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      // add asyncRouter
+      return this.$router.options.routes.concat(global.asyncRouter)
     },
     activeMenu() {
       const route = this.$route

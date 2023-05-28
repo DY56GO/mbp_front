@@ -71,60 +71,11 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'el-icon-s-home', affix: true }
     }]
-  },
-
-  {
-    path: '/user',
-    component: Layout,
-    redirect: '/user',
-    name: 'User',
-    meta: { title: '用户中心', icon: 'el-icon-user' },
-    children: [
-      {
-        path: 'account',
-        name: 'Account',
-        component: () => import('@/views/user/account'),
-        meta: { title: '我的信息', icon: 'el-icon-user-solid', noCache: false }
-      },
-      {
-        path: 'password',
-        name: 'Password',
-        component: () => import('@/views/user/password'),
-        meta: { title: '修改密码', icon: 'el-icon-lock', noCache: false }
-      }
-    ]
-  },
-
-  {
-    path: '/settings',
-    component: Layout,
-    redirect: '/settings',
-    name: 'Settings',
-    meta: { title: '系统管理', icon: 'el-icon-setting' },
-    children: [
-      {
-        path: 'user',
-        name: 'User',
-        component: () => import('@/views/settings/user'),
-        meta: { title: '用户管理', icon: 'el-icon-notebook-1', noCache: false }
-      },
-      {
-        path: 'role',
-        name: 'Role',
-        component: () => import('@/views/settings/role'),
-        meta: { title: '角色管理', icon: 'el-icon-s-custom', noCache: false }
-      },
-      {
-        path: 'menu',
-        name: 'Menu',
-        component: () => import('@/views/settings/menu'),
-        meta: { title: '菜单管理', icon: 'el-icon-menu', noCache: false }
-      }
-    ]
-  },
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  }
 ]
+
+// 404 page must be placed at the end !!!
+export const otherRoutes = [{ path: '*', redirect: '/404', hidden: true }]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

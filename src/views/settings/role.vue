@@ -110,7 +110,7 @@
       </el-main>
     </el-container>
 
-    <el-dialog title="菜单分配" :visible.sync="dialogMenuFormVisible" width="30%">
+    <el-dialog title="菜单分配" :visible.sync="dialogMenuFormVisible" width="30%" @opened="openDialog">
       <el-form ref="roleMenuForm" :label-width="formLabelWidth">
         <el-tree
           ref="tree"
@@ -121,7 +121,7 @@
           :default-checked-keys="defaultCheckedMenu"
           :props="{
             children: 'children',
-            label: 'menuName',
+            label: 'menuTitle',
           }"
           @check-change="handleCheckChange"
         />
@@ -187,6 +187,7 @@ export default {
       },
       menuData: [],
       defaultCheckedMenu: [],
+      defaultCheckedMenuOld: [],
       defaultExpandedMenu: [],
       updateRoleMenu: {
         id: '',
@@ -255,8 +256,7 @@ export default {
         getMenuList({ usingStart: 1 }).then(response => {
           const { data } = response
           this.menuData = data
-
-          // 获取角色菜单
+          // 获取角色菜单（由于选中bug，这里不包含父节点）
           getRoleMenu({ id: row.id }).then(response => {
             row = null
             const { data } = response
@@ -271,6 +271,10 @@ export default {
       }
       this.dialogMenuFormVisible = !this.dialogMenuFormVisible
     },
+    openDialog() {
+      // 打开对话框回调获取选中节点（包含父节点）
+      this.defaultCheckedMenuOld = this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
+    },
     handleCheckChange(data, checked, indeterminate) {
       const node = this.$refs.tree.getNode(data)
       if (!indeterminate) {
@@ -284,12 +288,12 @@ export default {
       // 通过与旧选中比较，生成要新增和删除的菜单列表
       const checkedMenu = this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
       for (const menu of checkedMenu) {
-        if (this.defaultCheckedMenu.indexOf(menu) === -1) {
+        if (this.defaultCheckedMenuOld.indexOf(menu) === -1) {
           this.updateRoleMenu.addMenuList.push(menu)
         }
       }
 
-      for (const menu of this.defaultCheckedMenu) {
+      for (const menu of this.defaultCheckedMenuOld) {
         if (checkedMenu.indexOf(menu) === -1) {
           this.updateRoleMenu.deleteMenuList.push(menu)
         }

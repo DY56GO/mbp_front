@@ -3,8 +3,8 @@
     <el-container>
       <el-header height="30px">
         <el-input
-          v-model="list.menuName"
-          placeholder="请输入菜单名称"
+          v-model="list.menuTitle"
+          placeholder="请输入菜单标题"
           clearable
           style="width: 460px;"
           @clear="fetchData"
@@ -30,19 +30,19 @@
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
           <el-table-column
-            prop="menuName"
-            label="菜单名称"
+            prop="menuTitle"
+            label="菜单标题"
             width="160"
           />
           <el-table-column
             prop="menuIcon"
             label="菜单图标"
-            width="130"
+            width="140"
           />
           <el-table-column
-            prop="routeUrl"
-            label="路由Url"
-            width="180"
+            prop="routePath"
+            label="路由path"
+            width="150"
           />
           <el-table-column
             prop="componentName"
@@ -52,21 +52,26 @@
           <el-table-column
             prop="componentPath"
             label="组件路径"
-            width="180"
+            width="150"
+          />
+          <el-table-column
+            prop="redirect"
+            label="重定向"
+            width="150"
           />
           <el-table-column
             prop="description"
             label="描述"
           />
           <el-table-column
-            prop="isHidden"
+            prop="hidden"
             label="状态"
             width="100"
             align="center"
           >
             <template slot-scope="scope">
               <el-switch
-                v-model="scope.row.isHidden"
+                v-model="scope.row.hidden"
                 :active-value="1"
                 :inactive-value="0"
                 active-text="隐藏"
@@ -127,20 +132,23 @@
 
     <el-dialog title="新增菜单" :visible.sync="dialogAddFormVisible" width="30%">
       <el-form ref="menuAddForm" :rules="menuRules" :model="addForm" :label-width="formLabelWidth">
-        <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="addForm.menuName" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="菜单标题" prop="menuTitle">
+          <el-input v-model="addForm.menuTitle" autocomplete="off" style="width: 260px;" />
         </el-form-item>
         <el-form-item label="菜单图标" prop="menuIcon">
           <el-input v-model="addForm.menuIcon" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="路由Url" prop="routeUrl">
-          <el-input v-model="addForm.routeUrl" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="路由path" prop="routePath">
+          <el-input v-model="addForm.routePath" autocomplete="off" style="width: 260px;" placeholder="子菜单不需要'/'" />
         </el-form-item>
-        <el-form-item label="组件名称" prop="componentName">
-          <el-input v-model="addForm.componentName" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="组件名称" prop="componentName" placeholder="通常以大写开头">
+          <el-input v-model="addForm.componentName" autocomplete="off" style="width: 260px;" placeholder="通常以大写开头" />
         </el-form-item>
         <el-form-item label="组件路径" prop="componentPath">
           <el-input v-model="addForm.componentPath" autocomplete="off" style="width: 260px;" />
+        </el-form-item>
+        <el-form-item label="重定向" prop="redirect">
+          <el-input v-model="addForm.redirect" autocomplete="off" style="width: 260px;" placeholder="子菜单不填写" />
         </el-form-item>
         <el-form-item label="菜单排序" prop="menuSort">
           <el-input v-model="addForm.menuSort" autocomplete="off" style="width: 260px;" />
@@ -157,20 +165,23 @@
 
     <el-dialog title="修改菜单" :visible.sync="dialogEditFormVisible" width="30%">
       <el-form ref="menuEditForm" :rules="menuRules" :model="editForm" :label-width="formLabelWidth">
-        <el-form-item label="菜单名称" prop="menuName">
-          <el-input v-model="editForm.menuName" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="菜单标题" prop="menuTitle">
+          <el-input v-model="editForm.menuTitle" autocomplete="off" style="width: 260px;" />
         </el-form-item>
         <el-form-item label="菜单图标" prop="menuIcon">
           <el-input v-model="editForm.menuIcon" autocomplete="off" style="width: 260px;" />
         </el-form-item>
-        <el-form-item label="路由Url" prop="routeUrl">
-          <el-input v-model="editForm.routeUrl" autocomplete="off" style="width: 260px;" />
+        <el-form-item label="路由path" prop="routePath">
+          <el-input v-model="editForm.routePath" autocomplete="off" style="width: 260px;" placeholder="子菜单不需要'/'" />
         </el-form-item>
         <el-form-item label="组件名称" prop="componentName">
-          <el-input v-model="editForm.componentName" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.componentName" autocomplete="off" style="width: 260px;" placeholder="通常以大写开头" />
         </el-form-item>
         <el-form-item label="组件路径" prop="componentPath">
           <el-input v-model="editForm.componentPath" autocomplete="off" style="width: 260px;" />
+        </el-form-item>
+        <el-form-item label="重定向" prop="redirect">
+          <el-input v-model="addForm.redirect" autocomplete="off" style="width: 260px;" placeholder="子菜单不填写" />
         </el-form-item>
         <el-form-item label="菜单排序" prop="menuSort">
           <el-input v-model="editForm.menuSort" autocomplete="off" style="width: 260px;" />
@@ -196,31 +207,33 @@ export default {
   data() {
     return {
       list: {
-        menuName: '',
+        menuTitle: '',
         current: 1,
         pageSize: 100,
         total: 0
       },
       addForm: {
         parentId: 0,
-        menuName: '',
+        menuTitle: '',
         menuIcon: '',
-        routeUrl: '',
+        routePath: '',
         componentName: '',
         componentPath: '',
+        redirect: '',
         description: '',
-        isHidden: 0,
+        hidden: 0,
         menuSort: 1
       },
       editForm: {
         parentId: 0,
-        menuName: '',
+        menuTitle: '',
         menuIcon: '',
-        routeUrl: '',
+        routePath: '',
         componentName: '',
         componentPath: '',
+        redirect: '',
         description: '',
-        isHidden: 0,
+        hidden: 0,
         menuSort: 1
       },
       tableData: [],
@@ -230,8 +243,8 @@ export default {
       // deleteVisible: false,
       formLabelWidth: '120px',
       menuRules: {
-        menuName: [{ required: true, message: '请输入菜单名称', trigger: 'blur' }],
-        routeUrl: [{ required: true, message: '请输入路由Url', trigger: 'blur' }]
+        menuTitle: [{ required: true, message: '请输入菜单标题', trigger: 'blur' }],
+        routePath: [{ required: true, message: '请输入路由path', trigger: 'blur' }]
       }
     }
   },
@@ -255,7 +268,7 @@ export default {
       this.fetchData()
     },
     handleHiddenChange(row) {
-      row.isHidden === 0 ? 1 : 0
+      row.hidden === 0 ? 1 : 0
       updateMenu(row).then(response => {
         // this.fetchData
       })

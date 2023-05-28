@@ -324,8 +324,8 @@ export default {
             row = null
             const { data } = response
             for (const role of data) {
-              this.checkedRoles.push(role)
-              this.checkedRolesOld.push(role)
+              this.checkedRoles.push(role.id)
+              this.checkedRolesOld.push(role.id)
             }
             this.handleCheckedRolesChange(this.checkedRoles)
           })

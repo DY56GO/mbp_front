@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { register, login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
@@ -6,7 +7,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    menus: {}
   }
 }
 
@@ -15,6 +17,11 @@ const state = getDefaultState()
 const mutations = {
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
+    // ensure data refresh
+    Vue.set(state, 'token', '')
+    Vue.set(state, 'name', '')
+    Vue.set(state, 'avatar', '')
+    Vue.set(state, 'menus', {})
   },
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -24,6 +31,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_MENUS: (state, menus) => {
+    state.menus = menus
   }
 }
 
@@ -48,7 +58,6 @@ const actions = {
         const { data } = response
         commit('SET_TOKEN', data)
         setToken(data)
-        dispatch('tagsView/delAllViews', null, { root: true })
         resolve()
       }).catch(error => {
         reject(error)
@@ -66,10 +75,11 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { userAccount, userAvatar } = data
+        const { userAccount, userAvatar, userMenuTree } = data
 
         commit('SET_NAME', userAccount)
         commit('SET_AVATAR', userAvatar)
+        commit('SET_MENUS', userMenuTree)
         resolve(data)
       }).catch(error => {
         reject(error)
