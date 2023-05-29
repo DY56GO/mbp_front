@@ -34,6 +34,15 @@ export function updateRole(data) {
   })
 }
 
+export function deleteRole(data) {
+  return request({
+    url: '/api/role/delete',
+    method: 'post',
+    params: {},
+    data: data
+  })
+}
+
 export function getRoleMenu(data) {
   return request({
     url: '/api/role/menu',
@@ -51,9 +60,17 @@ export function updateRoleMenu(data) {
   })
 }
 
-export function deleteRole(data) {
+export function getRoleSysInterface(data) {
   return request({
-    url: '/api/role/delete',
+    url: '/api/role/sysInterface',
+    method: 'get',
+    params: data
+  })
+}
+
+export function updateRoleSysInterface(data) {
+  return request({
+    url: '/api/role/updateSysInterface',
     method: 'post',
     params: {},
     data: data

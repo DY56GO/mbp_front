@@ -61,5 +61,12 @@ div:focus {
 
 // main-container global css
 .app-container {
-  padding: 20px;
+  padding: 10px 20px 0px 20px;
+}
+
+// form element centered
+.from-element-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

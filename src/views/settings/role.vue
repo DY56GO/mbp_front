@@ -70,16 +70,22 @@
           <el-table-column
             prop="op"
             label="操作"
-            width="300"
+            width="400"
             align="center"
           >
             <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="warning"
-                icon="el-icon-s-check"
+                icon="el-icon-menu"
                 @click="handleMenuFromShow(scope.row)"
-              >权限</el-button>
+              >菜单权限</el-button>
+              <el-button
+                size="mini"
+                type="warning"
+                icon="el-icon-link"
+                @click="handleInterfaceFromShow(scope.row)"
+              >接口权限</el-button>
               <el-button
                 size="mini"
                 type="primary"
@@ -96,11 +102,9 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          al
-          hide-on-single-page
           background
           :current-page="list.current"
-          :page-sizes="[ 100, 500, 1000]"
+          :page-sizes="[ 10, 100, 500, 1000]"
           :page-size="list.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
           :total="list.total"
@@ -110,11 +114,11 @@
       </el-main>
     </el-container>
 
-    <el-dialog title="菜单分配" :visible.sync="dialogMenuFormVisible" width="30%" @opened="openDialog">
+    <el-dialog title="菜单分配" :visible.sync="dialogMenuFormVisible" width="30%" @opened="openMenuDialog">
       <el-form ref="roleMenuForm" :label-width="formLabelWidth">
         <el-tree
           ref="tree"
-          :data="menuData"
+          :data="menuListData"
           show-checkbox
           node-key="id"
           :default-expanded-keys="defaultExpandedMenu"
@@ -129,6 +133,32 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleMenuFromShow">取 消</el-button>
         <el-button type="primary" @click="handleUpdateMenu">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="接口分配" :visible.sync="dialogInterfaceFormVisible" width="55%" @opened="openInterfaceDialog">
+      <el-form
+        ref="roleInterfaceForm"
+        :label-width="formLabelWidth"
+        class="from-element-centered"
+      >
+        <template>
+          <div class="transfer_list">
+            <el-transfer
+              v-model="checkedInterfaceValue"
+              filterable
+              :filter-method="filterMethod"
+              filter-placeholder="请输入接口名称"
+              :titles="['可选接口', '当前接口']"
+              :data="transferInterfaceData"
+            />
+          </div>
+        </template>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleInterfaceFromShow">取 消</el-button>
+        <el-button type="primary" @click="handleUpdateInterface">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -167,13 +197,19 @@
         <el-button type="primary" @click="handleEdit">确 定</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
+<style scoped>
+.transfer_list>>>.el-transfer-panel {
+  width: 350px;
+}
+</style>
+
 <script>
-import { getRoleListPage, addRole, updateRole, deleteRole, getRoleMenu, updateRoleMenu } from '@/api/role'
+import { getRoleListPage, addRole, updateRole, deleteRole, getRoleMenu, updateRoleMenu, getRoleSysInterface, updateRoleSysInterface } from '@/api/role'
 import { getMenuList } from '@/api/menu'
+import { getSysInterfaceList } from '@/api/sysInterface'
 
 export default {
   name: 'Role',
@@ -181,11 +217,11 @@ export default {
     return {
       list: {
         roleName: '',
-        current: 1,
-        pageSize: 100,
+        current: 0,
+        pageSize: 10,
         total: 0
       },
-      menuData: [],
+      menuListData: [],
       defaultCheckedMenu: [],
       defaultCheckedMenuOld: [],
       defaultExpandedMenu: [],
@@ -193,6 +229,14 @@ export default {
         id: '',
         addMenuList: [],
         deleteMenuList: []
+      },
+      transferInterfaceData: [],
+      checkedInterfaceValue: [],
+      checkedInterfaceValueOld: [],
+      updateRoleSysInterface: {
+        id: '',
+        addSysInterfaceList: [],
+        deleteSysInterfaceList: []
       },
       addForm: {
         roleName: '',
@@ -207,11 +251,11 @@ export default {
         usingStart: 1
       },
       tableData: [],
+      dialogMenuFormVisible: false,
+      dialogInterfaceFormVisible: false,
       dialogAddFormVisible: false,
       dialogEditFormVisible: false,
-      dialogMenuFormVisible: false,
       visible: false,
-      // deleteVisible: false,
       formLabelWidth: '120px',
       roleRules: {
         roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
@@ -227,15 +271,15 @@ export default {
       getRoleListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
-        this.total = data.total
+        this.list.total = data.total
       })
     },
     handleCurrentChange(val) {
-      this.current = val
+      this.list.current = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.pageSize = val
+      this.list.pageSize = val
       this.fetchData()
     },
     handleUsingChange(row) {
@@ -246,7 +290,7 @@ export default {
     },
     handleMenuFromShow(row) {
       this.updateRoleMenu.id = ''
-      this.menuData = []
+      this.menuListData = []
       this.defaultCheckedMenu = []
       this.defaultExpandedMenu = []
 
@@ -255,12 +299,13 @@ export default {
         // 获取菜单列表
         getMenuList({ usingStart: 1 }).then(response => {
           const { data } = response
-          this.menuData = data
+          this.menuListData = data
           // 获取角色菜单（由于选中bug，这里不包含父节点）
           getRoleMenu({ id: row.id }).then(response => {
             row = null
             const { data } = response
-            for (const menu of data) {
+            const checkedMenu = data
+            for (const menu of checkedMenu) {
               this.defaultCheckedMenu.push(menu.id.toString())
               this.defaultExpandedMenu.push(menu.id.toString())
             }
@@ -271,7 +316,8 @@ export default {
       }
       this.dialogMenuFormVisible = !this.dialogMenuFormVisible
     },
-    openDialog() {
+    openMenuDialog() {
+      this.defaultCheckedMenuOld = []
       // 打开对话框回调获取选中节点（包含父节点）
       this.defaultCheckedMenuOld = this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
     },
@@ -298,9 +344,81 @@ export default {
           this.updateRoleMenu.deleteMenuList.push(menu)
         }
       }
-
       updateRoleMenu(this.updateRoleMenu).then(() => {
         this.handleMenuFromShow()
+        this.$message({
+          showClose: true,
+          message: '修改成功！',
+          type: 'success',
+          duration: 1500
+        })
+      })
+    },
+    handleInterfaceFromShow(row) {
+      this.updateRoleSysInterface.id = ''
+      this.transferInterfaceData = []
+      this.checkedInterfaceValue = []
+      this.checkedInterfaceValueOld = []
+
+      if (!this.dialogInterfaceFormVisible) {
+        this.updateRoleSysInterface.id = row.id
+
+        // 获取系统接口列表
+        getSysInterfaceList().then(response => {
+          const { data } = response
+          const sysInterfaceList = data
+          sysInterfaceList.forEach((item, index) => {
+            this.transferInterfaceData.push({
+              label: item.interfaceName,
+              key: item.id
+            })
+          })
+
+          // 获取角色系统接口
+          getRoleSysInterface({ id: row.id }).then(response => {
+            row = null
+            const { data } = response
+            const roleSysInterfaceList = data
+            roleSysInterfaceList.forEach((item, index) => {
+              this.checkedInterfaceValue.push(item.id)
+              this.checkedInterfaceValueOld.push(item.id)
+            })
+          })
+        })
+      }
+      this.dialogInterfaceFormVisible = !this.dialogInterfaceFormVisible
+    },
+    openInterfaceDialog() {
+      // 清空搜索框内容
+      if (this.$refs.roleInterfaceForm.$children) {
+        this.$refs.roleInterfaceForm.$children[0].$children[0].query = ''
+        this.$refs.roleInterfaceForm.$children[0].$children[3].query = ''
+      }
+    },
+    filterMethod(query, item) {
+      return item.label.indexOf(query) > -1
+    },
+
+    handleUpdateInterface() {
+      this.updateRoleSysInterface.addSysInterfaceList = []
+      this.updateRoleSysInterface.deleteSysInterfaceList = []
+
+      // 通过与旧选中比较，生成要新增和删除的菜单列表
+      for (const sysInterface of this.checkedInterfaceValue) {
+        if (this.checkedInterfaceValueOld.indexOf(sysInterface) === -1) {
+          this.updateRoleSysInterface.addSysInterfaceList.push(sysInterface)
+        }
+      }
+
+      for (const sysInterface of this.checkedInterfaceValueOld) {
+        if (this.checkedInterfaceValue.indexOf(sysInterface) === -1) {
+          this.updateRoleSysInterface.deleteSysInterfaceList.push(sysInterface)
+        }
+      }
+
+      console.log(this.updateRoleSysInterface)
+      updateRoleSysInterface(this.updateRoleSysInterface).then(() => {
+        this.handleInterfaceFromShow()
         this.$message({
           showClose: true,
           message: '修改成功！',

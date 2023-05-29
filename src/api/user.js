@@ -75,23 +75,6 @@ export function updateUserSelf(data) {
   })
 }
 
-export function getUserRole(data) {
-  return request({
-    url: '/api/user/role',
-    method: 'get',
-    params: data
-  })
-}
-
-export function updateUserRole(data) {
-  return request({
-    url: '/api/user/updateRole',
-    method: 'post',
-    params: {},
-    data: data
-  })
-}
-
 export function updatePassword(data) {
   return request({
     url: '/api/user/updatePassword',
@@ -104,6 +87,23 @@ export function updatePassword(data) {
 export function deleteUser(data) {
   return request({
     url: '/api/user/delete',
+    method: 'post',
+    params: {},
+    data: data
+  })
+}
+
+export function getUserRole(data) {
+  return request({
+    url: '/api/user/role',
+    method: 'get',
+    params: data
+  })
+}
+
+export function updateUserRole(data) {
+  return request({
+    url: '/api/user/updateRole',
     method: 'post',
     params: {},
     data: data

@@ -32,7 +32,7 @@
           <el-table-column
             prop="menuTitle"
             label="菜单标题"
-            width="160"
+            width="140"
           />
           <el-table-column
             prop="menuIcon"
@@ -52,7 +52,7 @@
           <el-table-column
             prop="componentPath"
             label="组件路径"
-            width="150"
+            width="160"
           />
           <el-table-column
             prop="redirect"
@@ -111,16 +111,13 @@
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
               >删除</el-button>
-
             </template>
           </el-table-column>
         </el-table>
         <el-pagination
-          al
-          hide-on-single-page
           background
           :current-page="list.current"
-          :page-sizes="[ 100, 500, 1000]"
+          :page-sizes="[ 10, 100, 500, 1000]"
           :page-size="list.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
           :total="list.total"
@@ -208,8 +205,8 @@ export default {
     return {
       list: {
         menuTitle: '',
-        current: 1,
-        pageSize: 100,
+        current: 0,
+        pageSize: 10,
         total: 0
       },
       addForm: {
@@ -256,15 +253,15 @@ export default {
       getMenuListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
-        this.total = data.total
+        this.list.total = data.total
       })
     },
     handleCurrentChange(val) {
-      this.current = val
+      this.list.current = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.pageSize = val
+      this.list.pageSize = val
       this.fetchData()
     },
     handleHiddenChange(row) {

@@ -87,7 +87,7 @@
               <el-button
                 size="mini"
                 type="warning"
-                icon="el-icon-s-check"
+                icon="el-icon-s-custom"
                 @click="handleRoleFromShow(scope.row)"
               >权限</el-button>
               <el-button
@@ -106,11 +106,9 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          al
-          hide-on-single-page
           background
           :current-page="list.current"
-          :page-sizes="[ 100, 500, 1000]"
+          :page-sizes="[ 10, 100, 500, 1000]"
           :page-size="list.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
           :total="list.total"
@@ -226,8 +224,8 @@ export default {
       isIndeterminate: true,
       list: {
         userName: '',
-        current: 1,
-        pageSize: 100,
+        current: 0,
+        pageSize: 10,
         total: 0
       },
       options: [{
@@ -276,15 +274,15 @@ export default {
       getUserListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
-        this.total = data.total
+        this.list.total = data.total
       })
     },
     handleCurrentChange(val) {
-      this.current = val
+      this.list.current = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.pageSize = val
+      this.list.pageSize = val
       this.fetchData()
     },
     handleUsingChange(row) {
