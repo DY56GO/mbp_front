@@ -209,7 +209,7 @@ export default {
     }
 
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value && value.length < 6) {
         callback(new Error('密码不能少于8位'))
       } else {
         callback()
