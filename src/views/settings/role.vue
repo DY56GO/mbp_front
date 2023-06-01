@@ -297,7 +297,7 @@ export default {
       if (!this.dialogMenuFormVisible) {
         this.updateRoleMenu.id = row.id
         // 获取菜单列表
-        getMenuList({ usingStart: 1 }).then(response => {
+        getMenuList({ hidden: 0 }).then(response => {
           const { data } = response
           this.menuListData = data
           // 获取角色菜单（由于选中bug，这里不包含父节点）
@@ -364,7 +364,7 @@ export default {
         this.updateRoleSysInterface.id = row.id
 
         // 获取系统接口列表
-        getSysInterfaceList().then(response => {
+        getSysInterfaceList({ usingStart: 1 }).then(response => {
           const { data } = response
           const sysInterfaceList = data
           sysInterfaceList.forEach((item, index) => {
