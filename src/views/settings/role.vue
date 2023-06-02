@@ -453,6 +453,7 @@ export default {
       })
     },
     handleEditFromShow(row) {
+      row.usingStart = null
       if (row) {
         this.editForm = row
       }
