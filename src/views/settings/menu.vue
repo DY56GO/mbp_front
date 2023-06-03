@@ -178,7 +178,7 @@
           <el-input v-model="editForm.componentPath" autocomplete="off" style="width: 260px;" />
         </el-form-item>
         <el-form-item label="重定向" prop="redirect">
-          <el-input v-model="addForm.redirect" autocomplete="off" style="width: 260px;" placeholder="子菜单不填写" />
+          <el-input v-model="editForm.redirect" autocomplete="off" style="width: 260px;" placeholder="子菜单不填写" />
         </el-form-item>
         <el-form-item label="菜单排序" prop="menuSort">
           <el-input v-model="editForm.menuSort" autocomplete="off" style="width: 260px;" />
