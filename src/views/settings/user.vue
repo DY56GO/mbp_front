@@ -185,7 +185,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleEditFromShow">取 消</el-button>
+        <el-button @click="handleEditFromShow()">取 消</el-button>
         <el-button type="primary" @click="handleEdit">确 定</el-button>
       </div>
     </el-dialog>
@@ -247,6 +247,8 @@ export default {
         gender: '',
         userPassword: ''
       },
+      row: {},
+      userEditFormOld: {},
       userEditForm: {
         userName: '',
         userAccount: '',
@@ -385,13 +387,9 @@ export default {
     },
     handleEditFromShow(row) {
       if (row) {
-        this.userEditForm = row
+        this.userEditForm = { ...row }
       }
       this.dialogEditFormVisible = !this.dialogEditFormVisible
-      // form开始为隐藏状态，没有DOM对象，判单form关闭且DOM对象不为为undefined，重置表单
-      if (!this.dialogEditFormVisible && this.$refs['userEditForm']) {
-        this.$refs['userEditForm'].resetFields()
-      }
     },
     handleEdit() {
       this.$refs['userEditForm'].validate(valid => {

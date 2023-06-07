@@ -453,15 +453,11 @@ export default {
       })
     },
     handleEditFromShow(row) {
-      row.usingStart = null
       if (row) {
-        this.editForm = row
+        row.usingStart = null
+        this.editForm = { ...row }
       }
       this.dialogEditFormVisible = !this.dialogEditFormVisible
-      // form开始为隐藏状态，没有DOM对象，判单form关闭且DOM对象不为为undefined，重置表单
-      if (!this.dialogEditFormVisible && this.$refs['roleEditForm']) {
-        this.$refs['roleEditForm'].resetFields()
-      }
     },
     handleEdit() {
       this.$refs['roleEditForm'].validate(valid => {

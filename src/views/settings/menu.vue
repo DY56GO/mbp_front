@@ -320,13 +320,9 @@ export default {
     },
     handleEditFromShow(row) {
       if (row) {
-        this.editForm = row
+        this.editForm = { ...row }
       }
       this.dialogEditFormVisible = !this.dialogEditFormVisible
-      // form开始为隐藏状态，没有DOM对象，判单form关闭且DOM对象不为为undefined，重置表单
-      if (!this.dialogEditFormVisible && this.$refs['menuEditForm']) {
-        this.$refs['menuEditForm'].resetFields()
-      }
     },
     handleEdit() {
       this.$refs['menuEditForm'].validate(valid => {
