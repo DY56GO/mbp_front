@@ -77,7 +77,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           updateUserSelf(this.form).then(() => {
-            this.fetchData()
+            // this.fetchData()
             this.$message({
               showClose: true,
               message: '修改成功！',
