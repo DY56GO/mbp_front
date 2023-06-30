@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-container>
-      <el-header height="25px">
+      <el-header height="@rowheight*10 !important">
         <el-input
           v-model="list.interfaceName"
           placeholder="请输入接口名称"
@@ -20,12 +20,13 @@
       </el-header>
       <el-main>
         <el-table
+          v-loading="loading"
           :data="tableData"
-          style="width: 100%;margin-bottom: 20px;"
+          style="width: 100%;"
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
           :row-style="{color: '#2c3e50'}"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
@@ -91,13 +92,14 @@ export default {
   name: 'SysInterface',
   data() {
     return {
+      loading: false,
+      tableData: [],
       list: {
         interfaceName: '',
         current: 0,
         pageSize: 10,
         total: 0
-      },
-      tableData: []
+      }
     }
   },
   created() {
@@ -105,10 +107,12 @@ export default {
   },
   methods: {
     fetchData() {
+      this.loading = true
       getSysInterfaceListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.list.total = data.total
+        this.loading = false
       })
     },
     handleCurrentChange(val) {
@@ -120,8 +124,10 @@ export default {
       this.fetchData()
     },
     handleRefresh() {
+      this.loading = true
       refreshSysInterface().then(response => {
         this.fetchData()
+        this.loading = false
         this.$message({
           showClose: true,
           message: '刷新成功！',

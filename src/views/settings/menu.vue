@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-container>
-      <el-header height="30px">
+      <el-header>
         <el-input
           v-model="list.menuTitle"
           placeholder="请输入菜单标题"
@@ -20,12 +20,13 @@
       </el-header>
       <el-main>
         <el-table
+          v-loading="loading"
           :data="tableData"
-          style="width: 100%;margin-bottom: 20px;"
+          style="width: 100%;"
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
           :row-style="{color: '#2c3e50'}"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
@@ -104,20 +105,25 @@
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
-
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
-              >删除</el-button>
+              <el-popconfirm
+                title="确定删除吗？"
+                style="margin-left: 10px;"
+                @confirm="handleDelete(scope.row)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                >删除</el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
         <el-pagination
           background
           :current-page="list.current"
-          :page-sizes="[ 10, 100, 500, 1000]"
+          :page-sizes="[ 100, 500, 1000]"
           :page-size="list.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
           :total="list.total"
@@ -130,25 +136,25 @@
     <el-dialog title="新增菜单" :visible.sync="dialogAddFormVisible" width="30%">
       <el-form ref="menuAddForm" :rules="menuRules" :model="addForm" :label-width="formLabelWidth">
         <el-form-item label="菜单标题" prop="menuTitle">
-          <el-input v-model="addForm.menuTitle" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.menuTitle" autocomplete="off" />
         </el-form-item>
         <el-form-item label="菜单图标" prop="menuIcon">
-          <el-input v-model="addForm.menuIcon" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.menuIcon" autocomplete="off" />
         </el-form-item>
         <el-form-item label="路由path" prop="routePath">
-          <el-input v-model="addForm.routePath" autocomplete="off" style="width: 260px;" placeholder="子菜单不需要'/'" />
+          <el-input v-model="addForm.routePath" autocomplete="off" placeholder="子菜单不需要'/'" />
         </el-form-item>
         <el-form-item label="组件名称" prop="componentName" placeholder="通常以大写开头">
-          <el-input v-model="addForm.componentName" autocomplete="off" style="width: 260px;" placeholder="通常以大写开头" />
+          <el-input v-model="addForm.componentName" autocomplete="off" placeholder="通常以大写开头" />
         </el-form-item>
         <el-form-item label="组件路径" prop="componentPath">
-          <el-input v-model="addForm.componentPath" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.componentPath" autocomplete="off" />
         </el-form-item>
         <el-form-item label="重定向" prop="redirect">
-          <el-input v-model="addForm.redirect" autocomplete="off" style="width: 260px;" placeholder="子菜单不填写" />
+          <el-input v-model="addForm.redirect" autocomplete="off" placeholder="子菜单不填写" />
         </el-form-item>
         <el-form-item label="菜单排序" prop="menuSort">
-          <el-input v-model="addForm.menuSort" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.menuSort" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="addForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
@@ -163,25 +169,25 @@
     <el-dialog title="修改菜单" :visible.sync="dialogEditFormVisible" width="30%">
       <el-form ref="menuEditForm" :rules="menuRules" :model="editForm" :label-width="formLabelWidth">
         <el-form-item label="菜单标题" prop="menuTitle">
-          <el-input v-model="editForm.menuTitle" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.menuTitle" autocomplete="off" />
         </el-form-item>
         <el-form-item label="菜单图标" prop="menuIcon">
-          <el-input v-model="editForm.menuIcon" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.menuIcon" autocomplete="off" />
         </el-form-item>
         <el-form-item label="路由path" prop="routePath">
-          <el-input v-model="editForm.routePath" autocomplete="off" style="width: 260px;" placeholder="子菜单不需要'/'" />
+          <el-input v-model="editForm.routePath" autocomplete="off" placeholder="子菜单不需要'/'" />
         </el-form-item>
         <el-form-item label="组件名称" prop="componentName">
-          <el-input v-model="editForm.componentName" autocomplete="off" style="width: 260px;" placeholder="通常以大写开头" />
+          <el-input v-model="editForm.componentName" autocomplete="off" placeholder="通常以大写开头" />
         </el-form-item>
         <el-form-item label="组件路径" prop="componentPath">
-          <el-input v-model="editForm.componentPath" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.componentPath" autocomplete="off" />
         </el-form-item>
         <el-form-item label="重定向" prop="redirect">
-          <el-input v-model="editForm.redirect" autocomplete="off" style="width: 260px;" placeholder="子菜单不填写" />
+          <el-input v-model="editForm.redirect" autocomplete="off" placeholder="子菜单不填写" />
         </el-form-item>
         <el-form-item label="菜单排序" prop="menuSort">
-          <el-input v-model="editForm.menuSort" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.menuSort" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="editForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
@@ -222,12 +228,23 @@ export default {
   name: 'Menu',
   data() {
     return {
+      loading: false,
+      tableData: [],
       list: {
         menuTitle: '',
         current: 0,
-        pageSize: 10,
+        pageSize: 100,
         total: 0
       },
+      dialogAddFormVisible: false,
+      dialogEditFormVisible: false,
+      visible: false,
+      formLabelWidth: '120px',
+      menuRules: {
+        menuTitle: [{ required: true, message: '请输入菜单标题', trigger: 'blur' }],
+        routePath: [{ required: true, message: '请输入路由path', trigger: 'blur' }]
+      },
+      row: {},
       addForm: {
         parentId: 0,
         menuTitle: '',
@@ -251,16 +268,6 @@ export default {
         description: '',
         hidden: 0,
         menuSort: 1
-      },
-      tableData: [],
-      dialogAddFormVisible: false,
-      dialogEditFormVisible: false,
-      visible: false,
-      // deleteVisible: false,
-      formLabelWidth: '120px',
-      menuRules: {
-        menuTitle: [{ required: true, message: '请输入菜单标题', trigger: 'blur' }],
-        routePath: [{ required: true, message: '请输入路由path', trigger: 'blur' }]
       }
     }
   },
@@ -269,10 +276,12 @@ export default {
   },
   methods: {
     fetchData() {
+      this.loading = true
       getMenuListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.list.total = data.total
+        this.loading = false
       })
     },
     handleCurrentChange(val) {
@@ -343,22 +352,14 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm('确定要删除吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteMenu({ id: row.id }).then(() => {
-          this.fetchData()
-          this.$message({
-            showClose: true,
-            message: '删除成功！',
-            type: 'success',
-            duration: 1500
-          })
+      deleteMenu({ id: row.id }).then(() => {
+        this.fetchData()
+        this.$message({
+          showClose: true,
+          message: '删除成功！',
+          type: 'success',
+          duration: 1500
         })
-      }).catch(() => {
-
       })
     }
   }

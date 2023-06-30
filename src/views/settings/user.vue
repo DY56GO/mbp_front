@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-container>
-      <el-header height="30px">
+      <el-header height="@rowheight*10 !important">
         <el-input
           v-model="list.userName"
           placeholder="请输入用户名称"
@@ -20,14 +20,14 @@
       </el-header>
       <el-main>
         <el-table
+          v-loading="loading"
           :data="tableData"
-          style="width: 100%;margin-bottom: 20px;"
+          style="width: 100%;"
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
           :row-style="{color: '#2c3e50'}"
-          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
           <el-table-column
             prop="userName"
@@ -96,12 +96,18 @@
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
-              >删除</el-button>
+              <el-popconfirm
+                title="确定删除吗？"
+                style="margin-left: 10px;"
+                @confirm="handleDelete(scope.row)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                >删除</el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -135,22 +141,22 @@
     <el-dialog title="新增用户" :visible.sync="dialogAddFormVisible" width="30%">
       <el-form ref="userAddForm" :rules="userRules" :model="userAddForm" :label-width="formLabelWidth">
         <el-form-item label="用户名称">
-          <el-input v-model="userAddForm.userName" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userAddForm.userName" autocomplete="off" />
         </el-form-item>
         <el-form-item label="用户账号" prop="userAccount">
-          <el-input v-model="userAddForm.userAccount" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userAddForm.userAccount" autocomplete="off" />
         </el-form-item>
         <el-form-item label="用户头像">
-          <el-input v-model="userAddForm.userAvatar" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userAddForm.userAvatar" autocomplete="off" />
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="userAddForm.gender" placeholder="请选择性别">
+          <el-select v-model="userAddForm.gender" placeholder="请选择性别" style="width: 260px;">
             <el-option label="女" value="0" />
             <el-option label="男" value="1" />
           </el-select>
         </el-form-item>
         <el-form-item label="密码" prop="userPassword">
-          <el-input v-model="userAddForm.userPassword" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userAddForm.userPassword" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -162,16 +168,16 @@
     <el-dialog title="修改用户" :visible.sync="dialogEditFormVisible" width="30%">
       <el-form ref="userEditForm" :rules="userRules" :model="userEditForm" :label-width="formLabelWidth">
         <el-form-item label="用户名称" prop="userName">
-          <el-input v-model="userEditForm.userName" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userEditForm.userName" autocomplete="off" />
         </el-form-item>
         <el-form-item label="用户账号" prop="userAccount">
-          <el-input v-model="userEditForm.userAccount" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userEditForm.userAccount" autocomplete="off" />
         </el-form-item>
         <el-form-item label="用户头像">
-          <el-input v-model="userEditForm.userAvatar" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userEditForm.userAvatar" autocomplete="off" />
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="userEditForm.gender" placeholder="请选择">
+          <el-select v-model="userEditForm.gender" placeholder="请选择" style="width: 260px;">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -181,7 +187,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="密码" prop="userPassword">
-          <el-input v-model="userEditForm.userPassword" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="userEditForm.userPassword" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -216,12 +222,8 @@ export default {
       }
     }
     return {
-      checkAll: false,
-      checkedRoles: [],
-      checkedRolesOld: [],
-      roles: [],
-      rolesId: [],
-      isIndeterminate: true,
+      loading: false,
+      tableData: [],
       list: {
         userName: '',
         current: 0,
@@ -235,6 +237,20 @@ export default {
         value: 0,
         label: '女'
       }],
+      dialogAddFormVisible: false,
+      dialogEditFormVisible: false,
+      dialogRoleFormVisible: false,
+      formLabelWidth: '120px',
+      userRules: {
+        userAccount: [{ required: true, trigger: 'blur', validator: validateAccount }],
+        userPassword: [{ required: false, trigger: 'blur', validator: validatePassword }]
+      },
+      checkAll: false,
+      checkedRoles: [],
+      checkedRolesOld: [],
+      roles: [],
+      rolesId: [],
+      isIndeterminate: true,
       updateUserRole: {
         id: '',
         addRoleList: [],
@@ -255,16 +271,6 @@ export default {
         userAvatar: '',
         gender: '',
         userPassword: ''
-      },
-      tableData: [],
-      dialogAddFormVisible: false,
-      dialogEditFormVisible: false,
-      dialogRoleFormVisible: false,
-      // deleteVisible: false,
-      formLabelWidth: '120px',
-      userRules: {
-        userAccount: [{ required: true, trigger: 'blur', validator: validateAccount }],
-        userPassword: [{ required: false, trigger: 'blur', validator: validatePassword }]
       }
     }
   },
@@ -273,10 +279,12 @@ export default {
   },
   methods: {
     fetchData() {
+      this.loading = true
       getUserListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.list.total = data.total
+        this.loading = false
       })
     },
     handleCurrentChange(val) {
@@ -410,22 +418,14 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm('确定要删除吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteUser({ id: row.id }).then(() => {
-          this.fetchData()
-          this.$message({
-            showClose: true,
-            message: '删除成功！',
-            type: 'success',
-            duration: 1500
-          })
+      deleteUser({ id: row.id }).then(() => {
+        this.fetchData()
+        this.$message({
+          showClose: true,
+          message: '删除成功！',
+          type: 'success',
+          duration: 1500
         })
-      }).catch(() => {
-
       })
     }
   }

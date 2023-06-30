@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-container>
-      <el-header height="30px">
+      <el-header height="@rowheight*10 !important">
         <el-input
           v-model="list.roleName"
           placeholder="请输入角色名称"
@@ -20,12 +20,13 @@
       </el-header>
       <el-main>
         <el-table
+          v-loading="loading"
           :data="tableData"
-          style="width: 100%;margin-bottom: 20px;"
+          style="width: 100%;"
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
           :row-style="{color: '#2c3e50'}"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
         >
@@ -92,12 +93,18 @@
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
-              >删除</el-button>
+              <el-popconfirm
+                title="确定删除吗？"
+                style="margin-left: 10px;"
+                @confirm="handleDelete(scope.row)"
+              >
+                <el-button
+                  slot="reference"
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                >删除</el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -165,10 +172,10 @@
     <el-dialog title="新增角色" :visible.sync="dialogAddFormVisible" width="30%">
       <el-form ref="roleAddForm" :rules="roleRules" :model="addForm" :label-width="formLabelWidth">
         <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="addForm.roleName" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.roleName" autocomplete="off" />
         </el-form-item>
         <el-form-item label="角色标识" prop="roleIdentity">
-          <el-input v-model="addForm.roleIdentity" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.roleIdentity" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="addForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
@@ -183,10 +190,10 @@
     <el-dialog title="修改角色" :visible.sync="dialogEditFormVisible" width="30%">
       <el-form ref="roleEditForm" :rules="roleRules" :model="editForm" :label-width="formLabelWidth">
         <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="editForm.roleName" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.roleName" autocomplete="off" />
         </el-form-item>
         <el-form-item label="角色标识" prop="roleIdentity">
-          <el-input v-model="editForm.roleIdentity" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.roleIdentity" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="editForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
@@ -215,11 +222,23 @@ export default {
   name: 'Role',
   data() {
     return {
+      loading: false,
+      tableData: [],
       list: {
         roleName: '',
         current: 0,
         pageSize: 10,
         total: 0
+      },
+      dialogMenuFormVisible: false,
+      dialogInterfaceFormVisible: false,
+      dialogAddFormVisible: false,
+      dialogEditFormVisible: false,
+      visible: false,
+      formLabelWidth: '120px',
+      roleRules: {
+        roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+        roleIdentity: [{ required: true, message: '请输入角色标识', trigger: 'blur' }]
       },
       menuListData: [],
       defaultCheckedMenu: [],
@@ -244,22 +263,12 @@ export default {
         description: '',
         usingStart: 1
       },
+      row: {},
       editForm: {
         roleName: '',
         roleIdentity: '',
         description: '',
         usingStart: 1
-      },
-      tableData: [],
-      dialogMenuFormVisible: false,
-      dialogInterfaceFormVisible: false,
-      dialogAddFormVisible: false,
-      dialogEditFormVisible: false,
-      visible: false,
-      formLabelWidth: '120px',
-      roleRules: {
-        roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-        roleIdentity: [{ required: true, message: '请输入角色标识', trigger: 'blur' }]
       }
     }
   },
@@ -268,10 +277,12 @@ export default {
   },
   methods: {
     fetchData() {
+      this.loading = true
       getRoleListPage(this.list).then(response => {
         const { data } = response
         this.tableData = data.records
         this.list.total = data.total
+        this.loading = false
       })
     },
     handleCurrentChange(val) {
@@ -478,22 +489,14 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm('确定要删除吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteRole({ id: row.id }).then(() => {
-          this.fetchData()
-          this.$message({
-            showClose: true,
-            message: '删除成功！',
-            type: 'success',
-            duration: 1500
-          })
+      deleteRole({ id: row.id }).then(() => {
+        this.fetchData()
+        this.$message({
+          showClose: true,
+          message: '删除成功！',
+          type: 'success',
+          duration: 1500
         })
-      }).catch(() => {
-
       })
     }
   }
