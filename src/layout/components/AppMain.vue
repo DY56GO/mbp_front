@@ -1,5 +1,5 @@
 <template>
-  <section class="app-main">
+  <section ref="container" class="app-main">
     <transition name="fade-transform" mode="out-in">
       <!-- <router-view :key="key" /> -->
       <keep-alive :include="cachedViews">
@@ -10,6 +10,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import Watermark from '@/utils/waterMark'
+
 export default {
   name: 'AppMain',
   computed: {
@@ -18,7 +21,16 @@ export default {
     },
     cachedViews() {
       return this.$store.state.tagsView.cachedViews
-    }
+    },
+    ...mapGetters([
+      'sidebar',
+      'name',
+      'avatar'
+    ])
+  },
+  mounted: function() {
+    const name = this.name // 想要设置为水印的内容
+    Watermark.set(name, this.$refs.container) // container 元素标签
   }
 }
 </script>

@@ -8,7 +8,23 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
-          <img src="../../static/avatar.png?imageView2/1/w/80/h/80" class="user-avatar">
+          <!-- <img src="../../static/avatar.png?imageView2/1/w/80/h/80" class="user-avatar"> -->
+          <el-avatar
+            v-if="avatar !== ''"
+            shape="square"
+            size="large"
+            :src="avatar"
+          />
+
+          <el-avatar
+            v-else
+            shape="square"
+            size="large"
+            :style="{ backgroundColor: generateColour(name)}"
+          >
+            {{ name.charAt(0).toUpperCase() }}
+          </el-avatar>
+
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -46,9 +62,15 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      colours: ['#7ac143', '#f47721', '#d20962', '#00a78e', '#00bce4', '#7d3f98']
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
+      'name',
       'avatar'
     ])
   },
@@ -60,6 +82,12 @@ export default {
       await this.$store.dispatch('user/logout')
       // this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       this.$router.push('/login')
+    },
+    generateColour(name) {
+      return this.colours[(name.length * 10 + 1) % this.colours.length]
+    },
+    getAvatarStyle() {
+      return this.avatarStyle
     }
   }
 }
