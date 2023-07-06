@@ -35,6 +35,13 @@
         <el-button
           type="primary"
           style="float: right; margin-bottom: 10px;"
+          icon="el-icon-download"
+          size="small"
+          @click="handleExport"
+        >导出</el-button>
+        <el-button
+          type="primary"
+          style="float: right; margin-bottom: 10px;margin-right: 10px;"
           icon="el-icon-plus"
           size="small"
           @click="handleAddFromShow"
@@ -259,7 +266,7 @@
 </template>
 
 <script>
-import { getTradeListPage, addTrade, updateTrade, deleteTrade } from '@/api/trade'
+import { getTradeListPage, exportTradeExcel, addTrade, updateTrade, deleteTrade } from '@/api/trade'
 import SearchFilter from '@/components/SearchFile'
 
 export default {
@@ -355,6 +362,9 @@ export default {
         this.tableData = data.records
         this.list.total = data.total
         this.loading = false
+      }).catch(error => {
+        console.log(error)
+        this.loading = false
       })
     },
     handleCurrentChange(val) {
@@ -364,6 +374,17 @@ export default {
     handleSizeChange(val) {
       this.list.pageSize = val
       this.fetchData()
+    },
+    handleExport() {
+      exportTradeExcel(this.list).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', '交易数据导出.xlsx')
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
     },
     handleAddFromShow() {
       this.dialogAddFormVisible = !this.dialogAddFormVisible
