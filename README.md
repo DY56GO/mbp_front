@@ -61,7 +61,7 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 2.安装依赖，在项目文件下执行安装命令。
 
-3.修改与后台接口路径，打开文件 .env.development ，修改 VUE_APP_BASE_API 为本地后台地址（例：http://localhost:7529）。
+3.修改与后台接口路径，打开文件 .env.development ，修改 VUE_APP_BASE_API 为本地后台地址（例：http://localhost:7529 ）。
 
 4.运行启动命令。
 
