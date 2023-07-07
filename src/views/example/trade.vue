@@ -34,14 +34,21 @@
       <el-main>
         <el-button
           type="primary"
-          style="float: right; margin-bottom: 10px;"
+          style="float: right; margin-bottom: 5px;"
           icon="el-icon-download"
           size="small"
           @click="handleExport"
         >导出</el-button>
         <el-button
           type="primary"
-          style="float: right; margin-bottom: 10px;margin-right: 10px;"
+          style="float: right; margin-bottom: 5px; margin-right: 10px;"
+          icon="el-icon-printer"
+          size="small"
+          @click="handlePrint"
+        >打印</el-button>
+        <el-button
+          type="primary"
+          style="float: right; margin-bottom: 5px;"
           icon="el-icon-plus"
           size="small"
           @click="handleAddFromShow"
@@ -53,9 +60,9 @@
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266', padding:'2px'}"
           :row-style="{color: '#2c3e50'}"
-          :cell-style="{padding: '5px'}"
+          :cell-style="{padding: '1px'}"
         >
           <el-table-column
             prop="tsCode"
@@ -120,6 +127,7 @@
             label="金额"
             width="110"
             align="center"
+            :formatter="formatNumber"
           />
           <el-table-column
             prop="op"
@@ -152,7 +160,7 @@
         <el-pagination
           background
           :current-page="list.current"
-          :page-sizes="[ 10, 20, 100, 500, 1000]"
+          :page-sizes="[ 20, 100, 500, 1000]"
           :page-size="list.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
           :total="list.total"
@@ -261,13 +269,14 @@
         <el-button type="primary" @click="handleEdit">确 定</el-button>
       </div>
     </el-dialog>
-
+    <iframe id="printFrame" style="display: none;" />
   </div>
 </template>
 
 <script>
 import { getTradeListPage, exportTradeExcel, addTrade, updateTrade, deleteTrade } from '@/api/trade'
 import SearchFilter from '@/components/SearchFile'
+import { number_format } from '@/utils/utils'
 
 export default {
   name: 'Trade',
@@ -281,7 +290,7 @@ export default {
         startTradeDate: '',
         endTradeDate: '',
         current: 0,
-        pageSize: 10,
+        pageSize: 20,
         total: 0
       },
       pickerOptions: {
@@ -367,6 +376,9 @@ export default {
         this.loading = false
       })
     },
+    formatNumber(row, column, cellValue, index) {
+      return number_format(cellValue, 0)
+    },
     handleCurrentChange(val) {
       this.list.current = val
       this.fetchData()
@@ -374,6 +386,91 @@ export default {
     handleSizeChange(val) {
       this.list.pageSize = val
       this.fetchData()
+    },
+    handlePrint() {
+      const queryParam = { ...this.list }
+      queryParam.pageSize = 1000
+      let pageCount = parseInt(queryParam.total / queryParam.pageSize)
+      if (queryParam.total % queryParam.pageSize !== 0) {
+        pageCount = pageCount + 1
+      }
+
+      let printContent = '' // 打印内容
+      const pageSize = 22 // 每页行数
+      for (let pageNum = 0; pageNum < pageCount; pageNum++) {
+        queryParam.current++
+        getTradeListPage(queryParam).then(response => {
+          const { data } = response
+          const tableData = data.records
+          let pageRow = 0
+          for (let row = 0; row < tableData.length; row++) {
+            // 设置每页打印内容，最后添加分页（通过page-break-after: always）
+            let pageContent = ''
+
+            // 表头
+            if (pageRow === 0) {
+              pageContent += '<table border="1" cellspacing="0" style="page-break-after: always;" width="100%">'
+              pageContent += '<thead>'
+              pageContent += '<tr height="30px">'
+              pageContent += '<th width="12%">交易所市场代码</th>'
+              pageContent += '<th width="10%">交易日期</th>'
+              pageContent += '<th>开盘价</th>'
+              pageContent += '<th>收盘价</th>'
+              pageContent += '<th>最高价格</th>'
+              pageContent += '<th>最低价格</th>'
+              pageContent += '<th>平均价</th>'
+              pageContent += '<th>变化点数</th>'
+              pageContent += '<th>变化%</th>'
+              pageContent += '<th>交易量</th>'
+              pageContent += '<th>金额</th>'
+              pageContent += '</tr>'
+              pageContent += '</thead>'
+              pageContent += '<tbody>'
+            }
+
+            // 中间数据
+            pageContent += '<tr height="30px">'
+            pageContent += '<td align="left">' + tableData[row].tsCode + '</td>'
+            pageContent += '<td align="center">' + tableData[row].tradeDate + '</td>'
+            pageContent += '<td align="right">' + tableData[row].openPrice + '</td>'
+            pageContent += '<td align="right">' + tableData[row].closePrice + '</td>'
+            pageContent += '<td align="right">' + tableData[row].highPrice + '</td>'
+            pageContent += '<td align="right">' + tableData[row].lowPrice + '</td>'
+            pageContent += '<td align="right">' + tableData[row].priceAvg + '</td>'
+            pageContent += '<td align="right">' + tableData[row].pipChange + '</td>'
+            pageContent += '<td align="right">' + tableData[row].pctChange + '</td>'
+            pageContent += '<td align="right">' + tableData[row].vol + '</td>'
+            pageContent += '<td align="right">' + number_format(tableData[row].amount, 0) + '</td>'
+            pageContent += '</tr>'
+
+            // 表结束标签
+            if (pageRow === pageSize && (row + 1) === tableData.length) {
+              pageContent += '</tbody>'
+              pageContent += '</table>'
+            }
+            pageRow++
+            if (pageRow === pageSize) {
+              pageRow = 0
+            }
+            printContent += pageContent
+          }
+
+          if ((pageNum + 1) === pageCount) {
+            this.doPrint(printContent)
+          }
+        }).catch(error => {
+          console.log(error)
+        })
+      }
+    },
+    doPrint(printContent) {
+      const printFrame = document.getElementById('printFrame')
+      const doc = printFrame.contentWindow.document
+      doc.open()
+      doc.write(printContent)
+      doc.close()
+      const printDocument = printFrame.contentWindow
+      printDocument.print()
     },
     handleExport() {
       exportTradeExcel(this.list).then(response => {
