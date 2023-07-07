@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { time } from 'echarts'
 
 export function getTradeList(data) {
   return request({
@@ -21,7 +22,8 @@ export function exportTradeExcel(data) {
     url: '/api/trade/excel',
     method: 'get',
     params: data,
-    responseType: 'blob'
+    responseType: 'blob',
+    timeout: 60 * 60 * 5
   })
 }
 
