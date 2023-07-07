@@ -5,11 +5,11 @@
       <el-header height="@rowheight*10 !important">
         <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
           <el-form-item label="市场代码">
-            <el-input v-model="list.tsCode" />
+            <el-input v-model="query.tsCode" />
           </el-form-item>
           <el-form-item label="交易日期">
             <el-date-picker
-              v-model="list.startTradeDate"
+              v-model="query.startTradeDate"
               align="right"
               type="date"
               placeholder="选择开始日期"
@@ -19,7 +19,7 @@
             />
             至
             <el-date-picker
-              v-model="list.endTradeDate"
+              v-model="query.endTradeDate"
               align="right"
               type="date"
               placeholder="选择结束日期"
@@ -159,11 +159,11 @@
         </el-table>
         <el-pagination
           background
-          :current-page="list.current"
+          :current-page="query.current"
           :page-sizes="[ 20, 100, 500, 1000]"
-          :page-size="list.pageSize"
+          :page-size="query.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
-          :total="list.total"
+          :total="query.total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -285,7 +285,7 @@ export default {
     return {
       loading: false,
       tableData: [],
-      list: {
+      query: {
         tsCode: '',
         startTradeDate: '',
         endTradeDate: '',
@@ -359,17 +359,17 @@ export default {
   },
   methods: {
     reset() {
-      this.list.tsCode = ''
-      this.list.startTradeDate = ''
-      this.list.endTradeDate = ''
+      this.query.tsCode = ''
+      this.query.startTradeDate = ''
+      this.query.endTradeDate = ''
       this.fetchData()
     },
     fetchData() {
       this.loading = true
-      getTradeListPage(this.list).then(response => {
+      getTradeListPage(this.query).then(response => {
         const { data } = response
         this.tableData = data.records
-        this.list.total = data.total
+        this.query.total = data.total
         this.loading = false
       }).catch(error => {
         console.log(error)
@@ -380,15 +380,15 @@ export default {
       return number_format(cellValue, 0)
     },
     handleCurrentChange(val) {
-      this.list.current = val
+      this.query.current = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.list.pageSize = val
+      this.query.pageSize = val
       this.fetchData()
     },
     handlePrint() {
-      const queryParam = { ...this.list }
+      const queryParam = { ...this.query }
       queryParam.pageSize = 1000
       let pageCount = parseInt(queryParam.total / queryParam.pageSize)
       if (queryParam.total % queryParam.pageSize !== 0) {
@@ -473,7 +473,7 @@ export default {
       printDocument.print()
     },
     handleExport() {
-      exportTradeExcel(this.list).then(response => {
+      exportTradeExcel(this.query).then(response => {
         const url = window.URL.createObjectURL(new Blob([response]))
         const link = document.createElement('a')
         link.href = url

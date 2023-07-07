@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <el-input
-          v-model="list.menuTitle"
+          v-model="query.menuTitle"
           placeholder="请输入菜单标题"
           clearable
           style="width: 460px;"
@@ -122,11 +122,11 @@
         </el-table>
         <el-pagination
           background
-          :current-page="list.current"
+          :current-page="query.current"
           :page-sizes="[ 100, 500, 1000]"
-          :page-size="list.pageSize"
+          :page-size="query.pageSize"
           layout="->,total, sizes, prev, pager, next, jumper"
-          :total="list.total"
+          :total="query.total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -230,7 +230,7 @@ export default {
     return {
       loading: false,
       tableData: [],
-      list: {
+      query: {
         menuTitle: '',
         current: 0,
         pageSize: 100,
@@ -277,19 +277,19 @@ export default {
   methods: {
     fetchData() {
       this.loading = true
-      getMenuListPage(this.list).then(response => {
+      getMenuListPage(this.query).then(response => {
         const { data } = response
         this.tableData = data.records
-        this.list.total = data.total
+        this.query.total = data.total
         this.loading = false
       })
     },
     handleCurrentChange(val) {
-      this.list.current = val
+      this.query.current = val
       this.fetchData()
     },
     handleSizeChange(val) {
-      this.list.pageSize = val
+      this.query.pageSize = val
       this.fetchData()
     },
     handleHiddenChange(row) {
