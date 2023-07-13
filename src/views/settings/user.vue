@@ -6,7 +6,6 @@
           v-model="query.userName"
           placeholder="请输入用户名称"
           clearable
-          style="width: 460px;"
           @clear="fetchData"
         >
           <el-button slot="append" icon="el-icon-search" @click="fetchData" />

@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <el-container>
-
       <el-header height="@rowheight*10 !important">
         <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
           <el-form-item label="市场代码">
@@ -13,7 +12,7 @@
               align="right"
               type="date"
               placeholder="选择开始日期"
-              format="yyyy 年 MM 月 dd 日"
+              format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
               :picker-options="pickerOptions"
             />
@@ -23,7 +22,7 @@
               align="right"
               type="date"
               placeholder="选择结束日期"
-              format="yyyy 年 MM 月 dd 日"
+              format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
               :picker-options="pickerOptions"
             />
@@ -31,24 +30,24 @@
         </SearchFilter>
       </el-header>
 
-      <el-main style="padding-top: 5px;">
+      <el-main>
         <el-button
           type="primary"
-          style="float: right; margin-bottom: 5px;"
+          style="float: right; margin-bottom: 10px;"
           icon="el-icon-download"
           size="small"
           @click="handleExport"
         >导出</el-button>
         <el-button
           type="primary"
-          style="float: right; margin-bottom: 5px; margin-right: 10px;"
+          style="float: right; margin-bottom: 10px; margin-right: 10px;"
           icon="el-icon-printer"
           size="small"
           @click="handlePrint"
         >打印</el-button>
         <el-button
           type="primary"
-          style="float: right; margin-bottom: 5px;"
+          style="float: right; margin-bottom: 10px;"
           icon="el-icon-plus"
           size="small"
           @click="handleAddFromShow"
@@ -125,7 +124,7 @@
           <el-table-column
             prop="amount"
             label="金额"
-            width="110"
+            width="140"
             align="center"
             :formatter="formatNumber"
           />
@@ -170,7 +169,7 @@
       </el-main>
     </el-container>
 
-    <el-dialog title="新增交易" :visible.sync="dialogAddFormVisible" width="50%">
+    <el-dialog title="新增交易" :visible.sync="dialogAddFormVisible" width="45%">
       <el-form ref="tradeAddForm" :rules="tradeRules" :model="tradeAddForm" :label-width="formLabelWidth" style="display: flex; flex-wrap: wrap;">
         <el-form-item label="交易所市场代码" prop="tsCode">
           <el-input v-model="tradeAddForm.tsCode" autocomplete="off" />
@@ -183,7 +182,6 @@
             placeholder="选择结束日期"
             value-format="yyyy-MM-dd"
             :picker-options="pickerOptions"
-            style="width: 260px;"
           />
         </el-form-item>
         <el-form-item label="开盘价" prop="openPrice">
@@ -220,7 +218,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="修改交易" :visible.sync="dialogEditFormVisible" width="50%">
+    <el-dialog title="修改交易" :visible.sync="dialogEditFormVisible" width="45%">
       <el-form ref="tradeEditForm" :rules="tradeRules" :model="tradeEditForm" :label-width="formLabelWidth" style="display: flex; flex-wrap: wrap;">
         <el-form-item label="交易所市场代码" prop="tsCode">
           <el-input v-model="tradeEditForm.tsCode" autocomplete="off" />
@@ -233,7 +231,6 @@
             placeholder="选择结束日期"
             value-format="yyyy-MM-dd"
             :picker-options="pickerOptions"
-            style="width: 260px;"
           />
         </el-form-item>
         <el-form-item label="开盘价" prop="openPrice">
@@ -291,7 +288,8 @@ export default {
         endTradeDate: '',
         current: 0,
         pageSize: 20,
-        total: 0
+        total: 0,
+        sortOrder: 'descend'
       },
       pickerOptions: {
         disabledDate(time) {

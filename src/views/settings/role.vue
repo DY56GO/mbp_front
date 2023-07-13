@@ -6,7 +6,6 @@
           v-model="query.roleName"
           placeholder="请输入角色名称"
           clearable
-          style="width: 460px;"
           @clear="fetchData"
         >
           <el-button slot="append" icon="el-icon-search" @click="fetchData" />

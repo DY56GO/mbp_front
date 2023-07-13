@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" :rules="rules" label-width="100px" style="width: 460px;">
+    <el-form ref="form" :model="form" :rules="rules" label-width="100px" style="max-width: 460px;">
       <el-form-item label="用户账号" prop="userAccount">
         <el-input
           v-model="form.userAccount"

@@ -6,7 +6,6 @@
           v-model="query.menuTitle"
           placeholder="请输入菜单标题"
           clearable
-          style="width: 460px;"
           @clear="fetchData"
         >
           <el-button slot="append" icon="el-icon-search" @click="fetchData" />

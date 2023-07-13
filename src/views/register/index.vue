@@ -233,7 +233,7 @@ $light_gray: #eee;
 .register-container {
   min-height: 100%;
   width: 100%;
-  // background-color: $bg;
+  background-color: $bg;
   background-image: url(../../static/register.jpg);
   background-size: 100%;
   background-repeat: no-repeat;

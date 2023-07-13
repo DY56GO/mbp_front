@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" :rules="updateRules" label-width="100px" style="width: 460px;">
+    <el-form ref="form" :model="form" :rules="updateRules" label-width="100px">
       <el-form-item prop="userOldPassword" label="旧密码">
         <el-input
           v-model="form.userOldPassword"

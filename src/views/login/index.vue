@@ -189,7 +189,7 @@ $customColor_a: #409eff;
 .login-container {
   min-height: 100%;
   width: 100%;
-  // background-color: $bg;
+  background-color: $bg;
   background-image: url(../../static/login.jpg);
   background-size: 100%;
   background-repeat: no-repeat;

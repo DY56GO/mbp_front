@@ -49,7 +49,7 @@
 }
 
 .el-header {
-  padding: 10px;
+  padding: 10px 20px 10px 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
 }
 
@@ -60,9 +60,28 @@
 }
 
 .el-input {
-  width: 260px;
+  max-width: 260px;
+}
+
+.el-select {
+  width: 100%;
+  max-width: 260px;
+}
+
+.el-date-editor {
+  max-width: 192px;
 }
 
 .el-table {
   margin-bottom: 10px;
+}
+
+@media screen and (min-width: 220px) and (max-width:600px) {
+  .el-dialog {
+    width: 90% !important;
+  }
+}
+
+.el-pagination {
+  white-space: normal !important;
 }

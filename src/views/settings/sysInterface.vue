@@ -6,7 +6,6 @@
           v-model="query.interfaceName"
           placeholder="请输入接口名称"
           clearable
-          style="width: 460px;"
           @clear="fetchData"
         >
           <el-button slot="append" icon="el-icon-search" @click="fetchData" />
