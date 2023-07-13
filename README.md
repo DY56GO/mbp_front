@@ -3,7 +3,7 @@
 
 mbp是一个管理系统的基础项目模板，其主要作用是提供管理系统的基础功能，使开发者不必再次开发重复的功能，可以更快的进入核心业务的开发。
 
-![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-1.png "BMP-1")
+![image](img/MBP-1.png "BMP-1")
 
 
 
@@ -43,9 +43,9 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 #### 样例功能展示
 
-| ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-2.png "BMP-2") | ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-3.png "BMP-3") |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-4.png "BMP-4") | ![image](https://github.com/DY56GO/MarkdownImg/blob/master/MBP/MBP-5.png "BMP-5") |
+| ![image](img/MBP-2.png "BMP-2") | ![image](img/MBP-3.png "BMP-3") |
+| ------------------------------- | ------------------------------- |
+| ![image](img/MBP-4.png "BMP-4") | ![image](img/MBP-5.png "BMP-5") |
 
 ### 技术栈
 
@@ -87,7 +87,7 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 ```cmd
 # 克隆项目
-git clone 【未开源这里没有提供地址】 
+git clone https://github.com/DY56GO/mbp_front.git
 
 # 进入项目目录
 cd MBP_FRONT
@@ -101,6 +101,10 @@ npm run dev
 
 
 
-### 打包部署
+### 开发上手
 
-待续
+正在建设中...
+
+### 打包和部署
+
+正在建设中...
