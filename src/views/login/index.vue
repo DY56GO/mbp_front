@@ -125,7 +125,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg: #283443;
+// $bg: #2d3a4b;
+$bg: rgb(135, 135, 176);
 $light_gray: #fff;
 $cursor: #fff;
 
@@ -181,7 +182,8 @@ input:-webkit-autofill:active {
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+// $bg: #2d3a4b;
+$bg: rgb(135, 135, 176);
 $dark_gray: #eeeeeebc;
 $light_gray: #eee;
 $customColor_a: #409eff;
@@ -190,11 +192,22 @@ $customColor_a: #409eff;
   min-height: 100%;
   width: 100%;
   background-color: $bg;
-  background-image: url(../../static/login.jpg);
-  background-size: 100%;
-  background-repeat: no-repeat;
-  box-sizing: border-box;
-  overflow: hidden;
+  // background-size: 100%;
+  // background-repeat: no-repeat;
+  // box-sizing: border-box;
+  // overflow: hidden;
+  background: linear-gradient(
+    to right,
+    rgb(102, 83, 83),
+    rgb(155, 131, 90),
+    rgb(150, 150, 92),
+    rgb(78, 95, 78),
+    rgb(135, 135, 176),
+    rgb(136, 119, 148),
+    rgb(164, 138, 164)
+  );
+  background-size: 1000% 100%;
+  animation: smooth-transition 5s infinite alternate;
 
   .login-form {
     position: relative;
@@ -250,6 +263,15 @@ $customColor_a: #409eff;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+}
+
+@keyframes smooth-transition {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
   }
 }
 </style>

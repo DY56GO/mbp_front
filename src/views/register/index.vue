@@ -171,7 +171,8 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg: #283443;
+// $bg: #2d3a4b;
+$bg: rgb(135, 135, 176);
 $light_gray: #fff;
 $cursor: #fff;
 
@@ -226,7 +227,8 @@ input:-webkit-autofill:active {
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+// $bg: #2d3a4b;
+$bg: rgb(135, 135, 176);
 $dark_gray: #eeeeeebc;
 $light_gray: #eee;
 
@@ -234,7 +236,6 @@ $light_gray: #eee;
   min-height: 100%;
   width: 100%;
   background-color: $bg;
-  background-image: url(../../static/register.jpg);
   background-size: 100%;
   background-repeat: no-repeat;
   box-sizing: border-box;
