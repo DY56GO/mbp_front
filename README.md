@@ -81,7 +81,7 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 3.修改与后台接口路径，打开文件 .env.development ，修改 VUE_APP_BASE_API 为本地后台地址（例：http://localhost:7529 ）。
 
-4.运行启动命令。
+4.运行启动命令，在package.json文件中。
 
 ​	相关命名：
 
@@ -103,8 +103,42 @@ npm run dev
 
 ### 开发上手
 
-正在建设中...
+这个项目使用的是[vue-admin-template](https://github.com/PanJiaChen/vue-admin-template)，官网会有更加详细的介绍，这里简单的介绍怎么开发上手，抛开其他功能（登录Token
+
+、动态路由、页面水印等），先简单的开发一个可以和后台交互的页面，主要是src目录下api和views，api为后台请求接口，views为页面，可以仿照样例功能进行开发上手，注意在编写页面的时候组件名称应为大写开头。
+
+| 描述                                                         | 图片                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| src/api下trade.js为样例功能中交易列表请求后台的方法，其中会有与后台交互的接口。 | <img src="img/CODE-1.png" alt="image" title="CODE-1" style="zoom:60%;" /> |
+| src/views下example中为样例功能的页面文件，其中会引用api下trade.js的请求方法。 | <img src="img/CODE-2.png" alt="image" title="CODE-2" style="zoom:60%;" /> |
+| trade.vue页面下对api/trade中请求方法的引用和组件名称为大写开头。 | <img src="img/CODE-3.png" alt="image" title="CODE-3" style="zoom:60%;" /> |
+
+在开发完api和views后需要在菜单管理中添加菜单，并设置角色权限和接口权限（可选），设置完成后重新登陆即可看到新增的菜单。
+
+| 描述                                                         | 图片                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 在admin用户下，系统管理下的菜单管理中点击“新增”按钮新增开发的页面，可以参照样例功能中的参数进行填写。 | <img src="img/CODE-4.png" alt="image" title="CODE-4" style="zoom:50%;" /> |
+| 新增菜单完后，对角色菜单权限进行添加，在系统管理下的角色管理中，使用菜单权限完成。 | <img src="img/CODE-5.png" alt="image" title="CODE-5" style="zoom:60%;" /> |
+| 如果开启了接口鉴权（可选），还需要额外的进行接口权限分配，先刷新系统接口，在系统管理下的接口管理中点击“刷新”按钮即可。 | <img src="img/CODE-6.png" alt="image" title="CODE-6" style="zoom:30%;" /> |
+| 接着上一步，在系统管理下的菜单管理中，使用接口权限完成角色接口权限的分配。 | <img src="img/CODE-7.png" alt="image" title="CODE-7" style="zoom:60%;" /> |
+
+
 
 ### 打包和部署
 
-正在建设中...
+使用[vue-admin-template](https://github.com/PanJiaChen/vue-admin-template)的打包命令进行打包，将打包好的文件上传到Nginx中，即可完成部署。
+
+#### 打包
+
+执行“build:prod”命令，执行完成后会有一个dist的文件。
+
+```shell
+# 进行打包
+build:prod
+```
+
+
+
+#### 部署
+
+环境搭建请到deployment目录下查看“[服务器环境.md](https://github.com/DY56GO/mbp_back/blob/master/deployment/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83.md)“中的Nginx的操作，在搭建完环境后将dist放入映射的html目录中就可以了。
