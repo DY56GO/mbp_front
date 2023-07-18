@@ -11,7 +11,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Watermark from '@/utils/waterMark'
 
 export default {
   name: 'AppMain',
@@ -29,8 +28,10 @@ export default {
     ])
   },
   mounted: function() {
-    const name = this.name // 想要设置为水印的内容
-    Watermark.set(name, this.$refs.container) // container 元素标签
+
+  },
+  methods: {
+
   }
 }
 </script>
