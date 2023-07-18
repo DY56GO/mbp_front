@@ -79,11 +79,11 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 2.安装依赖，在项目文件下执行安装命令。
 
-3.修改与后台接口路径，打开文件 .env.development ，修改 VUE_APP_BASE_API 为本地后台地址（例：http://localhost:7529 ）。
+3.修改与后台接口的路径，打开文件 .env.development ，修改 VUE_APP_BASE_API 为本地后台地址（例：http://localhost:7529 ）。
 
 4.运行启动命令，在package.json文件中。
 
-​	相关命名：
+相关命名：
 
 ```cmd
 # 克隆项目
@@ -111,13 +111,13 @@ npm run dev
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | src/api下trade.js为样例功能中交易列表请求后台的方法，其中会有与后台交互的接口。 | <img src="img/CODE-1.png" alt="image" title="CODE-1" style="zoom:60%;" /> |
 | src/views下example中为样例功能的页面文件，其中会引用api下trade.js的请求方法。 | <img src="img/CODE-2.png" alt="image" title="CODE-2" style="zoom:60%;" /> |
-| trade.vue页面下对api/trade中请求方法的引用和组件名称为大写开头。 | <img src="img/CODE-3.png" alt="image" title="CODE-3" style="zoom:60%;" /> |
+| trade.vue页面下有对api/trade中请求方法的引用，且组件名称为大写开头。 | <img src="img/CODE-3.png" alt="image" title="CODE-3" style="zoom:60%;" /> |
 
 在开发完api和views后需要在菜单管理中添加菜单，并设置角色权限和接口权限（可选），设置完成后重新登陆即可看到新增的菜单。
 
 | 描述                                                         | 图片                                                         |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 在admin用户下，系统管理下的菜单管理中点击“新增”按钮新增开发的页面，可以参照样例功能中的参数进行填写。 | <img src="img/CODE-4.png" alt="image" title="CODE-4" style="zoom:50%;" /> |
+| 在admin用户下，系统管理下的菜单管理中点击“新增”按钮，新增开发的页面，可以参照样例功能中的参数进行填写。 | <img src="img/CODE-4.png" alt="image" title="CODE-4" style="zoom:50%;" /> |
 | 新增菜单完后，对角色菜单权限进行添加，在系统管理下的角色管理中，使用菜单权限完成。 | <img src="img/CODE-5.png" alt="image" title="CODE-5" style="zoom:60%;" /> |
 | 如果开启了接口鉴权（可选），还需要额外的进行接口权限分配，先刷新系统接口，在系统管理下的接口管理中点击“刷新”按钮即可。 | <img src="img/CODE-6.png" alt="image" title="CODE-6" style="zoom:30%;" /> |
 | 接着上一步，在系统管理下的菜单管理中，使用接口权限完成角色接口权限的分配。 | <img src="img/CODE-7.png" alt="image" title="CODE-7" style="zoom:60%;" /> |
