@@ -153,7 +153,7 @@ export default {
 <style lang="scss">
 .waves-footer {
   height: 20%;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
 }
