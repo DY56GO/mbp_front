@@ -2,22 +2,21 @@
   <div class="app-container">
     <el-container>
       <el-header height="@rowheight*10 !important">
-        <el-input
-          v-model="query.interfaceName"
-          placeholder="请输入接口名称"
-          clearable
-          @clear="fetchData"
-        >
-          <el-button slot="append" icon="el-icon-search" @click="fetchData" />
-        </el-input>
+        <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
+          <el-form-item label="接口名称">
+            <el-input v-model="query.interfaceName" />
+          </el-form-item>
+        </SearchFilter>
+      </el-header>
+
+      <el-main>
         <el-button
           type="primary"
-          style="float: right"
+          style="float: right; margin-bottom: 10px;"
           icon="el-icon-refresh"
+          size="small"
           @click="handleRefresh"
         >刷新</el-button>
-      </el-header>
-      <el-main>
         <el-table
           v-loading="loading"
           :data="tableData"
@@ -25,9 +24,9 @@
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266', padding:'2px'}"
           :row-style="{color: '#2c3e50'}"
-          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+          :cell-style="{padding: '9px'}"
         >
           <el-table-column
             prop="interfaceName"
@@ -55,7 +54,7 @@
           <el-table-column
             prop="usingStart"
             label="状态"
-            width="100"
+            width="120"
             align="center"
           >
             <template slot-scope="scope">
@@ -85,10 +84,12 @@
 </template>
 
 <script>
+import SearchFilter from '@/components/SearchFile'
 import { getSysInterfaceListPage, refreshSysInterface, updateSysInterface } from '@/api/sysInterface'
 
 export default {
   name: 'SysInterface',
+  components: { SearchFilter },
   data() {
     return {
       loading: false,
@@ -113,6 +114,10 @@ export default {
         this.query.total = data.total
         this.loading = false
       })
+    },
+    reset() {
+      Object.assign(this.$data.query, this.$options.data().query)
+      this.fetchData()
     },
     handleCurrentChange(val) {
       this.query.current = val

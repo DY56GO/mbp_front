@@ -2,22 +2,21 @@
   <div class="app-container">
     <el-container>
       <el-header>
-        <el-input
-          v-model="query.menuTitle"
-          placeholder="请输入菜单标题"
-          clearable
-          @clear="fetchData"
-        >
-          <el-button slot="append" icon="el-icon-search" @click="fetchData" />
-        </el-input>
+        <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
+          <el-form-item label="菜单标题">
+            <el-input v-model="query.menuTitle" />
+          </el-form-item>
+        </SearchFilter>
+      </el-header>
+
+      <el-main>
         <el-button
           type="primary"
-          style="float: right"
+          style="float: right; margin-bottom: 10px;"
           icon="el-icon-plus"
+          size="small"
           @click="handleAddFromShow"
         >新增</el-button>
-      </el-header>
-      <el-main>
         <el-table
           v-loading="loading"
           :data="tableData"
@@ -25,9 +24,10 @@
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266', padding:'2px'}"
           :row-style="{color: '#2c3e50'}"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+          :cell-style="{padding: '1px'}"
         >
           <el-table-column
             prop="menuTitle"
@@ -66,7 +66,7 @@
           <el-table-column
             prop="hidden"
             label="状态"
-            width="100"
+            width="120"
             align="center"
           >
             <template slot-scope="scope">
@@ -93,14 +93,12 @@
           >
             <template slot-scope="scope">
               <el-button
-                size="mini"
-                type="primary"
+                type="text"
                 icon="el-icon-plus"
                 @click="handleAddFromShow(scope.row)"
               >新增</el-button>
               <el-button
-                size="mini"
-                type="warning"
+                type="text"
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
@@ -111,9 +109,9 @@
               >
                 <el-button
                   slot="reference"
-                  size="mini"
-                  type="danger"
+                  type="text"
                   icon="el-icon-delete"
+                  style="color: #f78989;"
                 >删除</el-button>
               </el-popconfirm>
             </template>
@@ -221,10 +219,12 @@
 </style>
 
 <script>
+import SearchFilter from '@/components/SearchFile'
 import { getMenuListPage, addMenu, updateMenu, deleteMenu } from '@/api/menu'
 
 export default {
   name: 'Menu',
+  components: { SearchFilter },
   data() {
     return {
       loading: false,
@@ -282,6 +282,10 @@ export default {
         this.query.total = data.total
         this.loading = false
       })
+    },
+    reset() {
+      Object.assign(this.$data.query, this.$options.data().query)
+      this.fetchData()
     },
     handleCurrentChange(val) {
       this.query.current = val

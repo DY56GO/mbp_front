@@ -2,22 +2,24 @@
   <div class="app-container">
     <el-container>
       <el-header height="@rowheight*10 !important">
-        <el-input
-          v-model="query.roleName"
-          placeholder="请输入角色名称"
-          clearable
-          @clear="fetchData"
-        >
-          <el-button slot="append" icon="el-icon-search" @click="fetchData" />
-        </el-input>
+        <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
+          <el-form-item label="角色名称">
+            <el-input v-model="query.roleName" />
+          </el-form-item>
+          <el-form-item label="用户标识">
+            <el-input v-model="query.roleIdentity" />
+          </el-form-item>
+        </SearchFilter>
+      </el-header>
+
+      <el-main>
         <el-button
           type="primary"
-          style="float: right"
+          style="float: right; margin-bottom: 10px;"
           icon="el-icon-plus"
+          size="small"
           @click="handleAddFromShow"
         >新增</el-button>
-      </el-header>
-      <el-main>
         <el-table
           v-loading="loading"
           :data="tableData"
@@ -25,9 +27,9 @@
           row-key="id"
           border
           default-expand-all
-          :header-cell-style="{background:'#f5f7fa', color:'#606266'}"
+          :header-cell-style="{background:'#f5f7fa', color:'#606266', padding:'2px'}"
           :row-style="{color: '#2c3e50'}"
-          :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+          :cell-style="{padding: '1px'}"
         >
           <el-table-column
             prop="roleName"
@@ -46,7 +48,7 @@
           <el-table-column
             prop="usingStart"
             label="状态"
-            width="100"
+            width="120"
             align="center"
           >
             <template slot-scope="scope">
@@ -75,20 +77,19 @@
           >
             <template slot-scope="scope">
               <el-button
-                size="mini"
-                type="warning"
+                type="text"
                 icon="el-icon-menu"
+                style="color: #ebb563;"
                 @click="handleMenuFromShow(scope.row)"
               >菜单权限</el-button>
               <el-button
-                size="mini"
-                type="warning"
+                type="text"
+                style="color: #ebb563;"
                 icon="el-icon-link"
                 @click="handleInterfaceFromShow(scope.row)"
               >接口权限</el-button>
               <el-button
-                size="mini"
-                type="primary"
+                type="text"
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
@@ -99,8 +100,8 @@
               >
                 <el-button
                   slot="reference"
-                  size="mini"
-                  type="danger"
+                  type="text"
+                  style="color: #f78989;"
                   icon="el-icon-delete"
                 >删除</el-button>
               </el-popconfirm>
@@ -206,25 +207,22 @@
   </div>
 </template>
 
-<style scoped>
-.transfer_query>>>.el-transfer-panel {
-  width: 350px;
-}
-</style>
-
 <script>
+import SearchFilter from '@/components/SearchFile'
 import { getRoleListPage, addRole, updateRole, deleteRole, getRoleMenu, updateRoleMenu, getRoleSysInterface, updateRoleSysInterface } from '@/api/role'
 import { getMenuList } from '@/api/menu'
 import { getSysInterfaceList } from '@/api/sysInterface'
 
 export default {
   name: 'Role',
+  components: { SearchFilter },
   data() {
     return {
       loading: false,
       tableData: [],
       query: {
         roleName: '',
+        roleIdentity: '',
         current: 0,
         pageSize: 10,
         total: 0
@@ -283,6 +281,10 @@ export default {
         this.query.total = data.total
         this.loading = false
       })
+    },
+    reset() {
+      Object.assign(this.$data.query, this.$options.data().query)
+      this.fetchData()
     },
     handleCurrentChange(val) {
       this.query.current = val

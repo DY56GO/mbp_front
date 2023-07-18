@@ -32,14 +32,12 @@
 
       <el-main>
         <el-button
-          type="primary"
           style="float: right; margin-bottom: 10px;"
           icon="el-icon-download"
           size="small"
           @click="handleExport"
         >导出</el-button>
         <el-button
-          type="primary"
           style="float: right; margin-bottom: 10px; margin-right: 10px;"
           icon="el-icon-printer"
           size="small"
@@ -136,8 +134,7 @@
           >
             <template slot-scope="scope">
               <el-button
-                size="mini"
-                type="primary"
+                type="text"
                 icon="el-icon-edit"
                 @click="handleEditFromShow(scope.row)"
               >修改</el-button>
@@ -148,9 +145,9 @@
               >
                 <el-button
                   slot="reference"
-                  size="mini"
-                  type="danger"
+                  type="text"
                   icon="el-icon-delete"
+                  style="color: #f78989;"
                 >删除</el-button>
               </el-popconfirm>
             </template>
@@ -271,8 +268,8 @@
 </template>
 
 <script>
-import { getTradeListPage, exportTradeExcel, addTrade, updateTrade, deleteTrade } from '@/api/trade'
 import SearchFilter from '@/components/SearchFile'
+import { getTradeListPage, exportTradeExcel, addTrade, updateTrade, deleteTrade } from '@/api/trade'
 import { number_format } from '@/utils/utils'
 
 export default {
@@ -356,12 +353,6 @@ export default {
     this.fetchData()
   },
   methods: {
-    reset() {
-      this.query.tsCode = ''
-      this.query.startTradeDate = ''
-      this.query.endTradeDate = ''
-      this.fetchData()
-    },
     fetchData() {
       this.loading = true
       getTradeListPage(this.query).then(response => {
@@ -373,6 +364,10 @@ export default {
         console.log(error)
         this.loading = false
       })
+    },
+    reset() {
+      Object.assign(this.$data.query, this.$options.data().query)
+      this.fetchData()
     },
     formatNumber(row, column, cellValue, index) {
       return number_format(cellValue, 0)
