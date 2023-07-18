@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-container>
-      <el-header>
+      <el-header height="@rowheight*10 !important">
         <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
           <el-form-item label="菜单标题">
             <el-input v-model="query.menuTitle" />
@@ -154,7 +154,7 @@
           <el-input v-model="addForm.menuSort" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="addForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.description" type="textarea" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -187,7 +187,7 @@
           <el-input v-model="editForm.menuSort" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="editForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.description" type="textarea" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

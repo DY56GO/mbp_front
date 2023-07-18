@@ -151,7 +151,7 @@
           <el-input v-model="userAddForm.userAvatar" autocomplete="off" />
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="userAddForm.gender" placeholder="请选择性别" style="width: 260px;">
+          <el-select v-model="userAddForm.gender" placeholder="请选择性别">
             <el-option label="女" value="0" />
             <el-option label="男" value="1" />
           </el-select>
@@ -178,7 +178,7 @@
           <el-input v-model="userEditForm.userAvatar" autocomplete="off" />
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="userEditForm.gender" placeholder="请选择" style="width: 260px;">
+          <el-select v-model="userEditForm.gender" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"

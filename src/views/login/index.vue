@@ -191,12 +191,12 @@ $customColor_a: #409eff;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
   background: url(../../static/login.jpg);
   background-size: 100%;
   background-repeat: no-repeat;
   box-sizing: border-box;
   overflow: hidden;
+  background-color: #344e43;
 
   .login-form {
     position: relative;

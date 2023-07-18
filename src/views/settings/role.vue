@@ -178,7 +178,7 @@
           <el-input v-model="addForm.roleIdentity" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="addForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="addForm.description" type="textarea" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -196,7 +196,7 @@
           <el-input v-model="editForm.roleIdentity" autocomplete="off" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
-          <el-input v-model="editForm.description" type="textarea" autocomplete="off" style="width: 260px;" />
+          <el-input v-model="editForm.description" type="textarea" autocomplete="off" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
