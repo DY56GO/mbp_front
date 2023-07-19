@@ -150,7 +150,7 @@
         class="from-element-centered"
       >
         <template>
-          <div class="transfer_query">
+          <div class="transfer">
             <el-transfer
               v-model="checkedInterfaceValue"
               filterable
@@ -206,6 +206,15 @@
     </el-dialog>
   </div>
 </template>
+
+<style scoped>
+/* .transfer >>> .el-transfer{
+  padding: auto;
+} */
+.transfer >>> .el-transfer-panel {
+  width: 350px;
+}
+</style>
 
 <script>
 import SearchFilter from '@/components/SearchFile'
