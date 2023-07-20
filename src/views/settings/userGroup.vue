@@ -23,7 +23,6 @@
           style="width: 100%;"
           row-key="id"
           border
-          default-expand-all
           :header-cell-style="{background:'#f5f7fa', color:'#606266', padding:'2px'}"
           :row-style="{color: '#2c3e50'}"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
@@ -165,10 +164,10 @@
 
 <script>
 import SearchFilter from '@/components/SearchFile'
-import { getDepartmentListPage, addDepartment, updateDepartment, deleteDepartment } from '@/api/userGroup'
+import { getUserGroupListPage, addUserGroup, updateUserGroup, deleteUserGroup } from '@/api/userGroup'
 
 export default {
-  name: 'Department',
+  name: 'UserGroup',
   components: { SearchFilter },
   data() {
     return {
@@ -213,7 +212,7 @@ export default {
   methods: {
     fetchData() {
       this.loading = true
-      getDepartmentListPage(this.query).then(response => {
+      getUserGroupListPage(this.query).then(response => {
         const { data } = response
         this.tableData = data.records
         this.query.total = data.total
@@ -234,7 +233,7 @@ export default {
     },
     handleUsingChange(row) {
       row.usingStart === 0 ? 1 : 0
-      updateDepartment(row).then(response => {
+      updateUserGroup(row).then(response => {
         // this.fetchData
       })
     },
@@ -252,7 +251,7 @@ export default {
     handleAdd() {
       this.$refs['userGroupAddForm'].validate(valid => {
         if (valid) {
-          addDepartment(this.addForm).then(() => {
+          addUserGroup(this.addForm).then(() => {
             this.handleAddFromShow()
             this.fetchData()
             this.$message({
@@ -276,7 +275,7 @@ export default {
     handleEdit() {
       this.$refs['userGroupEditForm'].validate(valid => {
         if (valid) {
-          updateDepartment(this.editForm).then(() => {
+          updateUserGroup(this.editForm).then(() => {
             this.handleEditFromShow()
             this.fetchData()
             this.$message({
@@ -292,7 +291,7 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteDepartment({ id: row.id }).then(() => {
+      deleteUserGroup({ id: row.id }).then(() => {
         this.fetchData()
         this.$message({
           showClose: true,
