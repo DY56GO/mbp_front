@@ -14,6 +14,7 @@
               v-model="query.userGroupIdList"
               :data="userGroupTreeData"
               multiple
+              style="width: 93%;"
             />
           </el-form-item>
         </SearchFilter>
