@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getDepartmentList(data) {
+export function getUserGroupList(data) {
   return request({
     url: '/api/userGroup/list',
     method: 'get',
@@ -8,7 +8,7 @@ export function getDepartmentList(data) {
   })
 }
 
-export function getDepartmentListPage(data) {
+export function getUserGroupListPage(data) {
   return request({
     url: '/api/userGroup/list/page',
     method: 'get',
@@ -16,7 +16,7 @@ export function getDepartmentListPage(data) {
   })
 }
 
-export function addDepartment(data) {
+export function addUserGroup(data) {
   return request({
     url: '/api/userGroup/add',
     method: 'post',
@@ -25,7 +25,7 @@ export function addDepartment(data) {
   })
 }
 
-export function updateDepartment(data) {
+export function updateUserGroup(data) {
   return request({
     url: '/api/userGroup/update',
     method: 'post',
@@ -34,7 +34,7 @@ export function updateDepartment(data) {
   })
 }
 
-export function deleteDepartment(data) {
+export function deleteUserGroup(data) {
   return request({
     url: '/api/userGroup/delete',
     method: 'post',
