@@ -9,9 +9,15 @@
           <el-form-item label="用户账号">
             <el-input v-model="query.userAccount" />
           </el-form-item>
+          <el-form-item label="用户分组">
+            <ElSelectTree
+              v-model="query.userGroupIdList"
+              :data="userGroupTreeData"
+              multiple
+            />
+          </el-form-item>
         </SearchFilter>
       </el-header>
-
       <el-main>
         <el-button
           type="primary"
@@ -20,10 +26,10 @@
           size="small"
           @click="handleAddFromShow"
         >新增</el-button>
+
         <el-table
           v-loading="loading"
           :data="tableData"
-          style="width: 100%;"
           row-key="id"
           border
           default-expand-all
@@ -57,6 +63,12 @@
               <span v-else-if="scope.row.gender === 0">女</span>
             </template>
           </el-table-column>
+          <el-table-column
+            prop="userGroupName"
+            label="用户分组"
+            width="150"
+            align="center"
+          />
           <el-table-column
             prop="usingStart"
             label="状态"
@@ -123,91 +135,92 @@
           @current-change="handleCurrentChange"
         />
       </el-main>
+
+      <el-dialog title="角色分配" :visible.sync="dialogRoleFormVisible" width="30%">
+        <el-form ref="userRoleForm" :label-width="formLabelWidth">
+          <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
+          <div style="margin: 15px 0;" />
+          <el-checkbox-group v-model="checkedRoles" @change="handleCheckedRolesChange">
+            <el-checkbox v-for="role in roles" :key="role.id" :label="role.id">{{ role.roleIdentity }}</el-checkbox>
+          </el-checkbox-group>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleRoleFromShow">取 消</el-button>
+          <el-button type="primary" @click="handleUpdateRole">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-dialog title="新增用户" :visible.sync="dialogAddFormVisible" width="30%">
+        <el-form ref="userAddForm" :rules="userRules" :model="userAddForm" :label-width="formLabelWidth">
+          <el-form-item label="用户名称">
+            <el-input v-model="userAddForm.userName" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="用户账号" prop="userAccount">
+            <el-input v-model="userAddForm.userAccount" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="用户头像">
+            <el-input v-model="userAddForm.userAvatar" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="性别">
+            <el-select v-model="userAddForm.gender" placeholder="请选择性别">
+              <el-option label="女" value="0" />
+              <el-option label="男" value="1" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="密码" prop="userPassword">
+            <el-input v-model="userAddForm.userPassword" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleAddFromShow">取 消</el-button>
+          <el-button type="primary" @click="handleAdd">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-dialog title="修改用户" :visible.sync="dialogEditFormVisible" width="30%">
+        <el-form ref="userEditForm" :rules="userRules" :model="userEditForm" :label-width="formLabelWidth">
+          <el-form-item label="用户名称" prop="userName">
+            <el-input v-model="userEditForm.userName" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="用户账号" prop="userAccount">
+            <el-input v-model="userEditForm.userAccount" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="用户头像">
+            <el-input v-model="userEditForm.userAvatar" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="性别">
+            <el-select v-model="userEditForm.gender" placeholder="请选择">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="密码" prop="userPassword">
+            <el-input v-model="userEditForm.userPassword" autocomplete="off" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleEditFromShow()">取 消</el-button>
+          <el-button type="primary" @click="handleEdit">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-container>
-
-    <el-dialog title="角色分配" :visible.sync="dialogRoleFormVisible" width="30%">
-      <el-form ref="userRoleForm" :label-width="formLabelWidth">
-        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
-        <div style="margin: 15px 0;" />
-        <el-checkbox-group v-model="checkedRoles" @change="handleCheckedRolesChange">
-          <el-checkbox v-for="role in roles" :key="role.id" :label="role.id">{{ role.roleIdentity }}</el-checkbox>
-        </el-checkbox-group>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleRoleFromShow">取 消</el-button>
-        <el-button type="primary" @click="handleUpdateRole">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="新增用户" :visible.sync="dialogAddFormVisible" width="30%">
-      <el-form ref="userAddForm" :rules="userRules" :model="userAddForm" :label-width="formLabelWidth">
-        <el-form-item label="用户名称">
-          <el-input v-model="userAddForm.userName" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="userAccount">
-          <el-input v-model="userAddForm.userAccount" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="用户头像">
-          <el-input v-model="userAddForm.userAvatar" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="userAddForm.gender" placeholder="请选择性别">
-            <el-option label="女" value="0" />
-            <el-option label="男" value="1" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="密码" prop="userPassword">
-          <el-input v-model="userAddForm.userPassword" autocomplete="off" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleAddFromShow">取 消</el-button>
-        <el-button type="primary" @click="handleAdd">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="修改用户" :visible.sync="dialogEditFormVisible" width="30%">
-      <el-form ref="userEditForm" :rules="userRules" :model="userEditForm" :label-width="formLabelWidth">
-        <el-form-item label="用户名称" prop="userName">
-          <el-input v-model="userEditForm.userName" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="用户账号" prop="userAccount">
-          <el-input v-model="userEditForm.userAccount" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="用户头像">
-          <el-input v-model="userEditForm.userAvatar" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="userEditForm.gender" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="密码" prop="userPassword">
-          <el-input v-model="userEditForm.userPassword" autocomplete="off" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleEditFromShow()">取 消</el-button>
-        <el-button type="primary" @click="handleEdit">确 定</el-button>
-      </div>
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
 import SearchFilter from '@/components/SearchFile'
+import ElSelectTree from 'el-select-tree'
 import { getUserListPage, addUser, updateUser, deleteUser, getUserRole, updateUserRole } from '@/api/user'
 import { getRoleList } from '@/api/role'
+import { getUserGroupList } from '@/api/userGroup'
 
 export default {
   name: 'User',
-  components: { SearchFilter },
+  components: { SearchFilter, ElSelectTree },
   data() {
     const validateAccount = (rule, value, callback) => {
       if (value.length < 4) {
@@ -230,10 +243,14 @@ export default {
       query: {
         userName: '',
         userAccount: '',
+        userGroupIdList: [],
         current: 0,
         pageSize: 10,
         total: 0
       },
+      userGroupTreeData: [],
+      defaultCheckedMenu: [],
+      defaultCheckedMenuOld: [],
       options: [{
         value: 1,
         label: '男'
@@ -280,11 +297,14 @@ export default {
   },
   created() {
     this.fetchData()
+    this.handUserGroupTree()
   },
   methods: {
     fetchData() {
       this.loading = true
-      getUserListPage(this.query).then(response => {
+      const query = { ...this.query }
+      query.userGroupIdList = query.userGroupIdList.join(',')
+      getUserListPage(query).then(response => {
         const { data } = response
         this.tableData = data.records
         this.query.total = data.total
@@ -294,6 +314,12 @@ export default {
     reset() {
       Object.assign(this.$data.query, this.$options.data().query)
       this.fetchData()
+    },
+    handUserGroupTree() {
+      getUserGroupList().then(response => {
+        const { data } = response
+        this.userGroupTreeData = data
+      })
     },
     handleCurrentChange(val) {
       this.query.current = val

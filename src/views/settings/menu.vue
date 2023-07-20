@@ -23,7 +23,6 @@
           style="width: 100%;"
           row-key="id"
           border
-          default-expand-all
           :header-cell-style="{background:'#f5f7fa', color:'#606266', padding:'2px'}"
           :row-style="{color: '#2c3e50'}"
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
