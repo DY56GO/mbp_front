@@ -168,6 +168,13 @@
               <el-option label="男" value="1" />
             </el-select>
           </el-form-item>
+          <el-form-item label="用户分组">
+            <ElSelectTree
+              v-model="userAddForm.userGroupId"
+              :data="userGroupTreeData"
+              style="width: 93%;"
+            />
+          </el-form-item>
           <el-form-item label="密码" prop="userPassword">
             <el-input v-model="userAddForm.userPassword" autocomplete="off" />
           </el-form-item>
@@ -198,6 +205,13 @@
                 :value="item.value"
               />
             </el-select>
+          </el-form-item>
+          <el-form-item label="用户分组">
+            <ElSelectTree
+              v-model="userEditForm.userGroupId"
+              :data="userGroupTreeData"
+              style="width: 93%;"
+            />
           </el-form-item>
           <el-form-item label="密码" prop="userPassword">
             <el-input v-model="userEditForm.userPassword" autocomplete="off" />
@@ -283,6 +297,7 @@ export default {
         userAccount: '',
         userAvatar: '',
         gender: '',
+        userGroupIdList: '',
         userPassword: ''
       },
       row: {},
@@ -292,6 +307,7 @@ export default {
         userAccount: '',
         userAvatar: '',
         gender: '',
+        userGroupIdList: '',
         userPassword: ''
       }
     }
