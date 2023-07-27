@@ -40,9 +40,9 @@ const mutations = {
 const actions = {
   // user register
   register({ commit }, userInfo) {
-    const { username, password, checkPassword } = userInfo
+    const { username, password, checkPassword, captchaId, captcha } = userInfo
     return new Promise((resolve, reject) => {
-      register({ userAccount: username.trim(), userPassword: password, checkPassword: checkPassword }).then(() => {
+      register({ userAccount: username.trim(), userPassword: password, checkPassword: checkPassword, captchaId: captchaId, captcha: captcha }).then(() => {
         resolve()
       }).catch(error => {
         reject(error)
@@ -52,9 +52,9 @@ const actions = {
 
   // user login
   login({ commit, dispatch }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password, captchaId, captcha } = userInfo
     return new Promise((resolve, reject) => {
-      login({ userAccount: username.trim(), userPassword: password }).then(response => {
+      login({ userAccount: username.trim(), userPassword: password, captchaId: captchaId, captcha: captcha }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data)
         setToken(data)

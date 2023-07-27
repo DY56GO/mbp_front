@@ -47,7 +47,7 @@ service.interceptors.response.use(
 
     // 加入内容，判断响应头，导出文件格式
     const headers = response.headers
-    if (headers['content-type'] === 'application/octet-stream;charset=utf-8') {
+    if (headers['content-type'] === 'application/octet-stream;charset=utf-8' || headers['content-type'] === 'image/png') {
       return res
     }
 

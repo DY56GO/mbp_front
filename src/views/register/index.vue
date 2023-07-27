@@ -60,6 +60,22 @@
         </span>
       </el-form-item>
 
+      <el-form-item prop="captcha" style="width: 70%; display: inline-block;">
+        <span class="svg-container">
+          <svg-icon icon-class="shield" />
+        </span>
+        <el-input
+          ref="captcha"
+          v-model="registerForm.captcha"
+          placeholder="验证码"
+          name="captcha"
+          type="text"
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
+      <img :src="captchaSrc" alt="验证码" style="float: right;width: 28%;padding: 2px;border-radius: 5px;">
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleRegister">注册</el-button>
 
       <div class="tips">
@@ -72,7 +88,7 @@
           <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
         </defs>
         <g class="parallax">
-          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(64, 158, 255,0.7" />
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(64, 158, 255,0.7)" />
           <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255, 255, 255,0.5)" />
           <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(64, 158, 255,0.3)" />
           <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
@@ -83,6 +99,8 @@
 </template>
 
 <script>
+import { getCaptcha, getCaptchaId } from '@/api/user'
+
 export default {
   name: 'Register',
   data() {
@@ -104,18 +122,22 @@ export default {
     }
 
     return {
+      captchaSrc: '',
       docmHeight: '0', // 初始状态可视区高度
       showHeight: '0', // 实时可视区高度
       hidshow: true, // 是否显示底部
       registerForm: {
         username: '',
         password: '',
-        checkPassword: ''
+        checkPassword: '',
+        captchaId: -1,
+        captcha: ''
       },
       registerRules: {
         username: [{ required: true, message: '请输入用户账号', trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        checkPassword: [{ required: true, trigger: 'blur', validator: validateCheckPassword }]
+        checkPassword: [{ required: true, trigger: 'blur', validator: validateCheckPassword }],
+        captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',
@@ -145,6 +167,11 @@ export default {
         }
       })()
     }
+    getCaptchaId().then(response => {
+      const { data } = response
+      this.registerForm.captchaId = data
+      this.refreshCaptcha()
+    })
   },
   methods: {
     showPwd(data) {
@@ -168,6 +195,11 @@ export default {
           this.$refs.checkPassword.focus()
         })
       }
+    },
+    refreshCaptcha() {
+      getCaptcha({ captchaId: this.registerForm.captchaId }).then(response => {
+        this.captchaSrc = window.URL.createObjectURL(new Blob([response]))
+      })
     },
     handleRegister() {
       this.$refs.registerForm.validate(valid => {

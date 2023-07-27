@@ -1,10 +1,28 @@
 import request from '@/utils/request'
 
+export function getCaptchaId() {
+  return request({
+    url: '/api/user/captchaId',
+    method: 'get'
+  })
+}
+
+export function getCaptcha(data) {
+  return request({
+    url: '/api/user/captcha',
+    method: 'post',
+    params: {},
+    data: data,
+    responseType: 'blob'
+  })
+}
+
 export function register(data) {
   return request({
     url: '/api/user/register',
     method: 'post',
-    data
+    params: {},
+    data: data
   })
 }
 
@@ -12,7 +30,7 @@ export function login(data) {
   return request({
     url: '/api/user/login',
     method: 'post',
-    data
+    data: data
   })
 }
 
