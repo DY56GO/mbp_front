@@ -55,7 +55,7 @@
           auto-complete="on"
         />
       </el-form-item>
-      <img :src="captchaSrc" alt="验证码" style="float: right;width: 28%;padding: 2px;border-radius: 5px;">
+      <el-image :src="captchaSrc" alt="验证码" style="float: right;width: 28%;padding: 2px;border-radius: 5px;" @click="refreshCaptcha" />
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
@@ -135,11 +135,7 @@ export default {
         }
       })()
     }
-    getCaptchaId().then(response => {
-      const { data } = response
-      this.loginForm.captchaId = data
-      this.refreshCaptcha()
-    })
+    this.refreshCaptcha()
   },
   methods: {
     showPwd() {
@@ -153,8 +149,12 @@ export default {
       })
     },
     refreshCaptcha() {
-      getCaptcha({ captchaId: this.loginForm.captchaId }).then(response => {
-        this.captchaSrc = window.URL.createObjectURL(new Blob([response]))
+      getCaptchaId().then(response => {
+        const { data } = response
+        this.loginForm.captchaId = data
+        getCaptcha({ captchaId: this.loginForm.captchaId }).then(response => {
+          this.captchaSrc = window.URL.createObjectURL(new Blob([response]))
+        })
       })
     },
     handleLogin() {
