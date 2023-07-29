@@ -28,6 +28,12 @@
             align="center"
           />
           <el-table-column
+            prop="userId"
+            width="100"
+            label="用户id"
+            align="center"
+          />
+          <el-table-column
             prop="requestArea"
             width="200"
             label="请求地区"
