@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container>
       <el-header height="@rowheight*10 !important">
-        <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
+        <SearchFilter label-width="100px" size="small" @search="fetchData" @reset="reset">
           <el-form-item label="菜单标题">
             <el-input v-model="query.menuTitle" />
           </el-form-item>
@@ -214,7 +214,6 @@
        flex:1;
        overflow: auto;
    }
-
 </style>
 
 <script>

@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container>
       <el-header height="@rowheight*10 !important">
-        <SearchFilter label-width="100px" size="small" :max-show="4" @search="fetchData" @reset="reset">
+        <SearchFilter label-width="100px" size="small" @search="fetchData" @reset="reset">
           <el-form-item label="用户id">
             <el-input v-model="query.userId" />
           </el-form-item>

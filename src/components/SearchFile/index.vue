@@ -2,7 +2,7 @@
   <Form ref="form" :label-width="labelWidth" :size="size">
     <div id="searchFilter" :gutter="10" style="display: flex; flex-wrap: wrap;">
       <slot />
-      <FormItem style="margin-left:auto;">
+      <FormItem style="margin-left:auto; margin-bottom: 0px;">
         <Button type="primary" icon="el-icon-search" @click="handleQuery">查询</Button>
         <Button icon="el-icon-refresh" @click="handleReset">重置</Button>
         <Button v-show="collapsiable" type="text" @click="shiftCollapsiable">
@@ -77,5 +77,9 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style scoped>
+::v-deep .el-form-item{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 </style>
