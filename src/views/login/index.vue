@@ -136,6 +136,8 @@ export default {
       })()
     }
     this.refreshCaptcha()
+    // 绑定监听事件
+    window.addEventListener('keydown', this.keyDown)
   },
   methods: {
     showPwd() {
@@ -157,6 +159,13 @@ export default {
         })
       })
     },
+    // 监听回车键执行事件
+    keyDown(e) {
+      // 回车则执行登录方法 enter键的ASCII是13
+      if (e.keyCode === 13) {
+        this.handleLogin() // 需要执行的方法方法
+      }
+    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
@@ -171,6 +180,7 @@ export default {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
+            this.refreshCaptcha()
             this.loading = false
           })
         } else {
