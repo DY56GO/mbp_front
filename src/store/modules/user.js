@@ -75,9 +75,9 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { userAccount, userAvatar, userMenuTree } = data
+        const { userName, userAvatar, userMenuTree } = data
 
-        commit('SET_NAME', userAccount)
+        commit('SET_NAME', userName)
         commit('SET_AVATAR', userAvatar)
         commit('SET_MENUS', userMenuTree)
         resolve(data)
