@@ -358,7 +358,7 @@ $customColor_a: #409eff;
   .show-pwd {
     position: absolute;
     right: 10px;
-    top: 7px;
+    top: 11px;
     font-size: 16px;
     color: $dark_gray;
     cursor: pointer;
