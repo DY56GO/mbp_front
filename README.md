@@ -3,6 +3,20 @@
 
 mbp是一个管理系统的基础项目模板，其主要作用是提供管理系统的基础功能，使开发者不必再次开发重复的功能，可以更快的进入核心业务的开发。
 
+目前提供了：登录、注册、用户管理、RABC权限管理（用户权限）的基础功能。
+
+样例功能：简单的增删改查、表格导出、表格分页打印、Echats图表。
+
+前端说明：
+
+1.由于作者主后端开发，目前[vue-admin-template](https://github.com/PanJiaChen/vue-admin-template)（当前前端解决方案）基本没有继续更新和维护，该解决方案使用的是vue2，且没有[vue-element-admin](https://panjiachen.gitee.io/vue-element-admin-site/zh/)功能丰富，可能不适合你。
+
+2.升级了[vue-admin-template](https://github.com/PanJiaChen/vue-admin-template)中的[element-ui](https://element.eleme.io/#/zh-CN/component/form)为最新的版本，可以查阅其最新特性来进行使用。
+
+3.修复和微调了很多功能，如果碰到样式无法改变的情况，可能是作者做了全局样式的替换，可在src/styles/element-ui.scss下找到相关修改。
+
+4.后续应该会更换其他的解决方案（2023-08-08）。
+
 采用前后端分离的方案，这里为**前端项目**，前往[后端项目](https://github.com/DY56GO/mbp_back)。
 
 ![SHOW-1](img/SHOW-1.png)
