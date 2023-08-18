@@ -19,6 +19,8 @@ mbp是一个管理系统的基础项目模板，其主要作用是提供管理�
 
 采用前后端分离的方案，这里为**前端项目**，前往[后端项目](https://github.com/DY56GO/mbp_back)。
 
+[更新日志](https://github.com/DY56GO/mbp_front/blob/master/UPDATELOG.md)
+
 ![SHOW-1](img/SHOW-1.png)
 
 ![SHOW-3](img/SHOW-3.png)
@@ -162,3 +164,8 @@ build:prod
 #### 部署
 
 环境搭建请到deployment目录下查看“[服务器环境.md](https://github.com/DY56GO/mbp_back/blob/master/deployment/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83.md)“中的Nginx的操作，在搭建完环境后将dist放入映射的html目录中就可以了。
+
+
+
+### 更新日志
+
